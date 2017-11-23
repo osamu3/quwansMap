@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>修の地図</title>
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<td>
+				<div>
+					<button type="button" name="aaa" value="aaa">
+						<font size="2">ここを</font><font size="5" color="#333399">押してね</font>
+					</button>
+					<input type="text" id="msg_input" style="width:200px;" />
+  				<button onclick="publishMessage();">語る</button>
+  				<div id="msg"></div>
+
+
+				</div>
+			</td>
+			<td>
+			    <div id="map"></div>
+			</td>
+		</tr>
+	</table>
+
+	<script src="./socket.io/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="./js/initMap.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNgVIwF9P1Ze0jkLo7OC-aT2ACCXBSFAY&v=3.exp&callback=initMap"type="text/javascript"></script>
+
+<script>
+	var socket = io.connect();
+	$(function() {
+		socket.on('greeting', function(data, fn) {//サーバーからソケットリクエスト「greeting」を受信すると、"data.message"をダイヤログに表示する。
+			var answer = confirm(data.message);//確認ダイヤログの応答結果を代入
+			fn(answer);
+		});
+
+		socket.on("s2cFileWrited",function(data){//サーバーからソケットリクエスト「s2cFileWrited」を受信すると
+			confirm(data);//ダイヤログ表示
+		});
+	});
+
+	function publishMessage() {
+		alert("関数：publishMessage()の呼び出しがあった");
+		socket.emit("c2sSendFile",{
+			fileName:"sampleFile01.txt",
+			fileData:"こんにちは\nHello\n"
+		});
+	}
+</script>
+</body>
+</html>

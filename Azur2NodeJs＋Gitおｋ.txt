@@ -33,25 +33,17 @@ Azureポータルサイトにて
 ④GitHubにアクセス
 　 リポジトリ《https://github.com/osamu3/quwansMap》ができているの確認
 
-⑤Windows PowerShell起動
+⑤Gitデブロイテスト《Windows PowerShell起動》
  ローカルリポジトリを作成するディレクトリ[C:\Users\NEC-PCuser\OneDrive\kkr>]に移動
  【git clone https://github.com/osamu3/quwansMap】実行
  【cd quwansMap】
  【git remote -v】
-　　origin  https://github.com/osamu3/quwansMap (fetch)
-　　origin  https://github.com/osamu3/quwansMap (push)
-　　　　　↑これを、https://github.com/osamu3/quwansMap.gitにする必要があるのかな？？
+  >> origin  https://github.com/osamu3/quwansMap (fetch)
+  >> origin  https://github.com/osamu3/quwansMap (push)
+      ↑これを、https://github.com/osamu3/quwansMap.gitにする必要があるのかな？？
+       (?:git remote add origin https://github.com/osamu3/quwansNodeJs01.git)
 
-git remote add origin https://github.com/osamu3/quwansNodeJs01.git
-git remote add origin https://github.com/osamu3/quwansNodeJs01.git
-git push -u origin master
-git remote add origin https://github.com/osamu3/quwansNodeJs01.git
-git push -u origin master
-git add .
-git commit -am "2nd"
- git push -u origin master
-
-
-
-外部リポジトリ[https://github.com/azure-appservice-samples/NodeJS-EmptySiteTemplate]
-
+  《index.jsを編集》
+  【git add .】
+  【git commit -am "1st Commit"】
+  【git push -u origin master】

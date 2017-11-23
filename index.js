@@ -3,7 +3,7 @@ var http = require('http'),
 var server = http.createServer();
 
 server.on('request',function(req, res) {
-	fs.readFile(__dirname+'/publicHtml/index.html','utf-8',function(err,htmlSorce){
+	fs.readFile(__dirname+'/views/index.html','utf-8',function(err,htmlSorce){
 		if(err){
 			res.writeHead(404,{'Content-Type':'text/plain'});
 			res.write("index.html file not found!");

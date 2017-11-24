@@ -23,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/osamu3/quwansMap/issues"
   },
-  "homepage": "https://github.com/osamu3/quwansMap#readme"
+  "homepage": "https://github.com/osamu3/quwansMap#readme",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.16.2"
+  }
 }

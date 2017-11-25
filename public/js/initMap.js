@@ -9,10 +9,15 @@
 	L.control.scale({metric: true, imperial: false}).addTo(map);
 
 	map.on('click', function(e) {
+
+   var myPath = location.pathname;
+		//フォルダパスを取得
+		// var dir_path = myPath.split("/").reverse().slice(1).reverse().join("/");
+
 		L.marker([e.latlng.lat, e.latlng.lng], {
 			title: "シカ",
 			icon: shikaIcon
-		}).addTo(map).bindPopup("シカをクリックしました。");
+		}).addTo(map).bindPopup("シカをクリックしました。dirName:"+myPath);
 //		}).addTo(map).bindPopup("シカをクリックしました。").openPopup();
 
 

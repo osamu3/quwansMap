@@ -1,10 +1,5 @@
-/*  socketIOでクライアントにファイル内容を通知
+/*  socketIOでクライアントへ、ディレクトリ一覧通知用*/
 let fs = require('fs');
-fs.readdir('.', function(err, files){
-  if (err) throw err;
-  console.log(files);
-});
-*/
 
 
 
@@ -47,8 +42,13 @@ io.sockets.on('connection', function (socket){
   //　クライアントからmessage_from_clientがemitされた時
   socket.on('C2S_Msg', function (msg){
     console.log('クライアントからのメッセージを受け取りました。メッセージは:', msg);
-	socket.emit("S2C_Msg","S_to_C_message");
-  	console.log('サーバーからクライアントへブロードキャスト');
+
+	//クライアントへサーバー側のカレントディレクトリの内容を返す
+	fs.readdir('./public', function(err, files){
+  	if (err) throw err;
+		socket.emit("S2C_Msg",files);
+	  	console.log('サーバーからクライアントへブロードキャスト');
+	});
   });
 });
 

@@ -64,7 +64,7 @@
 	});
 
 	//Jsonファイルの読み込み ファイル名=markers.json
-	$.getJSON("dataJson/markers.json", function(animals) {
+	$.getJSON("/static/dataJson/markers.json", function(animals) {
 		for (var i in animals) {
 			var animal = animals[i];
 			if(animal.Type == "シカ"){

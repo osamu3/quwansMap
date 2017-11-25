@@ -2,10 +2,6 @@
 let fs = require('fs');
 
 
-
-
-
-
 /* 1. expressモジュールをロードし、インスタンス化してappに代入。*/
 //var app = express();
 var express = require("express");
@@ -30,7 +26,7 @@ http.listen(port,() => {
 
 //Express での静的ファイルの提供 ←重要
 //http://expressjs.com/ja/starter/static-files.htmlより
-//Cf:app.use('/static', express.static('public'));←別名定義例：public ディレクトリー内のファイルを /static パス・プレフィックスからロードできます。
+app.use('/static', express.static('public'));//←別名定義例：public ディレクトリー内のファイルを /static パス・プレフィックスからロードできます。
 app.use(express.static('public'));
 
 

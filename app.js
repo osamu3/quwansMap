@@ -44,7 +44,7 @@ io.sockets.on('connection', function (socket){
     console.log('クライアントからのメッセージを受け取りました。メッセージは:', msg);
 
 	//クライアントへサーバー側のカレントディレクトリの内容を返す
-	fs.readdir('./public', function(err, files){
+	fs.readdir('./public/dataJson', function(err, files){
   	if (err) throw err;
 		socket.emit("S2C_Msg",files);
 	  	console.log('サーバーからクライアントへブロードキャスト');

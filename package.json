@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/osamu3/quwansMap#readme",
   "dependencies": {
-    "ejs": "^2.5.7",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "gulp-ejs": "^3.1.0"
   }
 }

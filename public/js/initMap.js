@@ -10,6 +10,8 @@
 
 	map.on('click', function(e) {
 
+	    console.log("クリックされました。");
+
    var myPath = location.pathname;
 		//フォルダパスを取得
 		// var dir_path = myPath.split("/").reverse().slice(1).reverse().join("/");

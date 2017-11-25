@@ -9,9 +9,9 @@
     "node": ">=6.9.1"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
-  "main": "index.js",
+  "main": "app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/osamu3/quwansMap.git"

@@ -47,3 +47,12 @@ Azureポータルサイトにて
   【git add .】
   【git commit -am "1st Commit"】
   【git push -u origin master】
+
+⑥コーティン準備
+  npm install express --save
+  npm install gulp-ejs --save
+
+
+
+git commit -am "gulp-ejs インストール"
+npm install --save gulp-ejs

@@ -1,24 +1,54 @@
-/* 1. expressモジュールをロードし、インスタンス化してappに代入。*/
+/*  socketIOでクライアントにファイル内容を通知
+let fs = require('fs');
+fs.readdir('.', function(err, files){
+  if (err) throw err;
+  console.log(files);
+});
+*/
 
+
+
+
+
+
+/* 1. expressモジュールをロードし、インスタンス化してappに代入。*/
+//var app = express();
 var express = require("express");
 var app = express();
+var http = require("http").Server(app);
+var io = require("socket.io")(http);
+var port = process.env.PORT || 1337;
+
+// (クライアント側設定)View EngineにEJSを指定。
+app.set('view engine', 'ejs');
+
+// "/"へのGETリクエストで/views/index.ejsを表示する。拡張子（.ejs）は省略されていることに注意。
+app.get("/", function(req, res, next){
+    res.render("index", {});
+});
+
+/* 2. listen()メソッドを実行してポートで待ち受け。*/
+http.listen(port,() => {
+	console.log(`listening on *:${port}`);
+});
+
 
 //Express での静的ファイルの提供 ←重要
 //http://expressjs.com/ja/starter/static-files.htmlより
 //Cf:app.use('/static', express.static('public'));←別名定義例：public ディレクトリー内のファイルを /static パス・プレフィックスからロードできます。
 app.use(express.static('public'));
 
-// (クライアント側設定)View EngineにEJSを指定。
-app.set('view engine', 'ejs');
 
-/* 2. listen()メソッドを実行してポートで待ち受け。*/
-var port = process.env.PORT || 1337;
-var server = app.listen(port, function(){
-    console.log("Node.js is listening to PORT:" + server.address().port);
-    console.log("dirName=" + __dirname);
+//IOソケットイベント
+io.sockets.on('connection', function (socket){
+  // hello, worldはクライアントが接続するとすぐに1度だけ送信されます
+  console.log('connected!!!!!!!!!!!!!!!!!!!!!!');
+  //socket.emit('message_from_server', 'hello! client');
+  //　クライアントからmessage_from_clientがemitされた時
+  socket.on('C2S_Msg', function (msg){
+    console.log('クライアントからのメッセージを受け取りました。メッセージは:', msg);
+	socket.emit("S2C_Msg","S_to_C_message");
+  	console.log('サーバーからクライアントへブロードキャスト');
+  });
 });
 
-// "/"へのGETリクエストで/views/index.ejsを表示する。拡張子（.ejs）は省略されていることに注意。
-app.get("/", function(req, res, next){
-    res.render("index", {});
-});

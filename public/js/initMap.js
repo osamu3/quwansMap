@@ -1,4 +1,17 @@
 ﻿$(function() {
+	//=======================↓追加=========================
+	var socket = io.connect();
+	socket.on('S2C_Msg', function (data) {
+		console.log('\nsocket.ontest.jsのsocket.on関数の呼び出しがありました。\n');
+		alert("サーバーからメッセージがありました。["+data+"]");
+	});
+ 
+	function sendMsg(msg) {
+		console.log('   サーバーへEmitしました。');
+		socket.emit('C2S_Msg', { "type":"mapClick","msg":msg });
+	}
+
+//==========================↑追加======================
 	var map = L.map('map'); //おまじない
 	L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
 		attribution: "<a href='https://maps.gis.go.jp/development/ichiran.html' target='_blank'>国土地理院タイル</a>",
@@ -11,8 +24,9 @@
 	map.on('click', function(e) {
 
 	    console.log("クリックされました。");
+		sendMsg("クライアントよりサーバーへ");
 
-   var myPath = location.pathname;
+		var myPath = location.pathname;
 		//フォルダパスを取得
 		// var dir_path = myPath.split("/").reverse().slice(1).reverse().join("/");
 
@@ -21,7 +35,6 @@
 			icon: shikaIcon
 		}).addTo(map).bindPopup("シカをクリックしました。dirName:"+myPath);
 //		}).addTo(map).bindPopup("シカをクリックしました。").openPopup();
-
 
 		//データ追加
 		$("#dataRange").append(

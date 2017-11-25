@@ -26,6 +26,7 @@
   "homepage": "https://github.com/osamu3/quwansMap#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "gulp-ejs": "^3.1.0"
+    "gulp-ejs": "^3.1.0",
+    "socket.io": "^2.0.4"
   }
 }

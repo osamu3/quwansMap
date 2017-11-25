@@ -33,7 +33,18 @@
 		</table>
 
 
+		<script src="/socket.io/socket.io.js"></script>
     <script src='js/initMap.js'></script>
+<!--
+    <script>
+      var socket = io();
+			
+			socket.emit('message_from_client', "hello osam");
 
+			socket.on('S_to_C_message', (msg) => {
+            alert(msg);
+     });
+    </script>
+-->
   </body>
 </html>

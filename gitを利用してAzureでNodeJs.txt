@@ -1,0 +1,159 @@
+gitを利用して
+Azure で Node.js Web アプリを作成する
+
+【参考】
+https://docs.microsoft.com/ja-jp/azure/app-service/app-service-web-get-started-nodejs より
+
+①デプロイ ユーザーの作成
+/**************************/
+デブロイ資格情報の登録
+このデプロイ ユーザーの作成は 1 回だけ実行する必要があります。
+すべての Azure デプロイでこのユーザーを使用できます。
+デブロイ資格情報　【azOsamuDev】 --password 【hotTee30】
+/**************************/
+az webapp deployment user set --user-name azOsamu --password hotTee30
+
+osamu@Azure:~$ az webapp deployment user set --user-name azOsamu --password hotTee30
+{
+  "id": null,
+  "kind": null,
+  "name": "web",
+  "publishingPassword": null,
+  "publishingPasswordHash": null,
+  "publishingPasswordHashSalt": null,
+  "publishingUserName": "azOsamu",
+  "type": "Microsoft.Web/publishingUsers/web",
+  "userName": null
+}
+
+
+②リソース グループの作成
+az group create --name quwansResourceGroup04 --location "Japan West"
+osamu@Azure:~$ az group create --name quwansResourceGroup04 --location "Japan West"
+{
+  "id": "/subscriptions/fe87546c-74cb-40b5-946c-e314d73f77be/resourceGroups/quwansResourceGroup04",
+  "location": "japanwest",
+  "managedBy": null,
+  "name": "quwansResourceGroup04",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null
+}
+
+③Azure App Service プランの作成
+
+az appservice plan create --name quwansAppServicePlan --resource-group quwansResourceGroup04 --sku FREE
+osamu@Azure:~$ az appservice plan create --name quwansAppServicePlan --resource-group quwansResourceGroup04 --sku FREE
+{
+  "adminSiteName": null,
+  "appServicePlanName": "quwansAppServicePlan",
+  "geoRegion": "Japan West",
+  "hostingEnvironmentProfile": null,
+  "id": "/subscriptions/fe87546c-74cb-40b5-946c-e314d73f77be/resourceGroups/quwansResourceGroup04/providers/Microsoft.Web/serverfarms/quwansAppServicePlan",
+  "isSpot": false,
+  "kind": "app",
+  "location": "Japan West",
+  "maximumNumberOfWorkers": 1,
+  "name": "quwansAppServicePlan",
+  "numberOfSites": 0,
+  "perSiteScaling": false,
+  "provisioningState": "Succeeded",
+  "reserved": false,
+  "resourceGroup": "quwansResourceGroup04",
+  "sku": {
+    "capabilities": null,
+    "capacity": 0,
+    "family": "F",
+    "locations": null,
+    "name": "F1",
+    "size": "F1",
+    "skuCapacity": null,
+    "tier": "Free"
+  },
+  "spotExpirationTime": null,
+  "status": "Ready",
+  "subscription": "fe87546c-74cb-40b5-946c-e314d73f77be",
+  "tags": null,
+  "targetWorkerCount": 0,
+  "targetWorkerSizeId": 0,
+  "type": "Microsoft.Web/serverfarms",
+  "workerTierName": null
+}
+
+
+④Web アプリを作成する
+az webapp create --name quwansapp01 --resource-group quwansResourceGroup04 --plan quwansAppServicePlan --deployment-local-git
+osamu@Azure:~$ az webapp create --name quwansapp01 --resource-group quwansResourceGroup04 --plan quwansAppServicePlan --deployment-local-git
+
+Local git is configured with url of 'https://azOsamu@quwansapp01.scm.azurewebsites.net/quwansapp01.git'
+{
+  "availabilityState": "Normal",
+  "clientAffinityEnabled": true,
+  "clientCertEnabled": false,
+  "cloningInfo": null,
+  "containerSize": 0,
+  "dailyMemoryTimeQuota": 0,
+  "defaultHostName": "quwansapp01.azurewebsites.net",
+  "deploymentLocalGitUrl": "https://azOsamu@quwansapp01.scm.azurewebsites.net/quwansapp01.git",
+  "enabled": true,
+  "enabledHostNames": [
+    "quwansapp01.azurewebsites.net",
+    "quwansapp01.scm.azurewebsites.net"
+  ],
+  "ftpPublishingUrl": "ftp://waws-prod-os1-003.ftp.azurewebsites.windows.net/site/wwwroot",
+  "hostNameSslStates": [
+    {
+      "hostType": "Standard",
+      "name": "quwansapp01.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "virtualIp": null
+    },
+    {
+      "hostType": "Repository",
+      "name": "quwansapp01.scm.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "virtualIp": null
+    }
+  ],
+  "hostNames": [
+    "quwansapp01.azurewebsites.net"
+  ],
+  "hostNamesDisabled": false,
+  "hostingEnvironmentProfile": null,
+  "httpsOnly": false,
+  "id": "/subscriptions/fe87546c-74cb-40b5-946c-e314d73f77be/resourceGroups/quwansResourceGroup04/providers/Microsoft.Web/sites/quwansapp01",
+  "identity": null,
+  "isDefaultContainer": null,
+  "kind": "app",
+  "lastModifiedTimeUtc": "2017-11-22T09:34:58.717000",
+  "location": "Japan West",
+  "maxNumberOfWorkers": null,
+  "name": "quwansapp01",
+  "outboundIpAddresses": "40.74.136.48,40.74.134.125,40.74.138.30,40.74.140.177",
+  "possibleOutboundIpAddresses": "40.74.136.48,40.74.134.125,40.74.138.30,40.74.140.177",
+  "repositorySiteName": "quwansapp01",
+  "reserved": false,
+  "resourceGroup": "quwansResourceGroup04",
+  "scmSiteAlsoStopped": false,
+  "serverFarmId": "/subscriptions/fe87546c-74cb-40b5-946c-e314d73f77be/resourceGroups/quwansResourceGroup04/providers/Microsoft.Web/serverfarms/quwansAppServicePlan",
+  "siteConfig": null,
+  "slotSwapStatus": null,
+  "snapshotInfo": null,
+  "state": "Running",
+  "suspendedTill": null,
+  "tags": null,
+  "targetSwapSlot": null,
+  "trafficManagerHostNames": null,
+  "type": "Microsoft.Web/sites",
+  "usageState": "Normal"
+}
+
+⑤WebSiteへアクセス
+http://quwansapp01.azurewebsites.net
+
+g1t0samu

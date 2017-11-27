@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+	<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<meta name="robots" content="noindex,nofollow,noarchive"/>
+	<title>DN-Web64｜Sample｜Google Maps</title>
+ 
+	<!--ブートストラップ停止 -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="styleSeet.css">
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	<script type="text/javascript" src="js/street.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAT1CHvQkiTKOdPbmJp2gOpqDIblMgzfI"></script>
+ 
+	</head>
+	<body>
+		<h2>QuwansMaps</h2>
+		<p>
+			<button type="button" onclick=funcTest()>
+				<img src="mark.gif" alt="［！］" width="47" height="42"><br>
+				アラート
+			</button>
+		</p>
+		<div class ="row">
+			<div class="col-sm-2"><!--2割bootstrapパラメータ -->
+				<div id="pointList"></div>
+				<div id="currentLatLng"></div>
+			</div>
+			<div class="col-sm-10"><!--10割bootstrapパラメータ -->
+				<div id="mapCanvas"></div>
+				<div id="mapView"></div>
+			</div>
+		</div>
+	</body>
+</html>

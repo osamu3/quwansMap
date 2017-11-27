@@ -1,0 +1,21 @@
+#mapCanvas {
+	height: 300px;
+}
+#mapView {
+	height: 300px;
+}
+#pointList {
+	margin-top: 10px;
+}
+.mapPoint {
+	padding: 10px 10px;
+	border-bottom: 1px solid #CCC;
+	margin: 0px 2px;
+}
+.mapPoint:hover {
+	background-color: #eee;
+}
+#currentLatLng{
+	margin-top: 20px;
+	padding-left: 10px;
+}

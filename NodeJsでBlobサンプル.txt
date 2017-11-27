@@ -1,0 +1,94 @@
+Node.js から BLOB ストレージを使用する方法
+cf:https://docs.microsoft.com/ja-jp/azure/storage/blobs/storage-nodejs-how-to-use-blob-storage
+
+・ストレージ アカウント : Azure Storage にアクセスする場合には必ず、ストレージ アカウントを使用します。
+・BLOB : 任意の種類およびサイズのファイルです。
+	・BLOB には、ブロック BLOB とページ BLOB (ディスク)、追加 BLOB の 3 種類があります。
+		・ブロック BLOB は、テキストまたはバイナリ ファイルの（静的ファイル？）を格納するのに最適です。
+		・追加 BLOB は、追加操作用に最適化されているので、ログ記録シナリオで役立ちます。
+		・ページ BLOBは、読み取り/書き込み操作を頻繁に実行する場合に効率的です。
+
+・コンテナー : コンテナーは、BLOB のセットをグループ化します。
+
+・Node.jsから、Azure Storage を使用するには、Azure Storage SDK for Node.js が必要。
+	・ノード パッケージ マネージャー (NPM) を使用してパッケージを取得する
+		・npm install --save azure-storage 
+
+・サーバー側のJavaScriptアプリケーションでの利用方法
+	・var azure = require('azure-storage');←パッケージのインポートコマンド
+
+
+・Azure Storage の接続文字列の設定
+	・Azure モジュールは、Azure ストレージ アカウントに接続するために必要な情報として、
+		環境変数 AZURE_STORAGE_ACCOUNT と AZURE_STORAGE_ACCESS_KEY、
+		または AZURE_STORAGE_CONNECTION_STRING を読み取ります。 
+		これらの環境変数が設定されていない場合は、 createBlobServiceを呼び出すときにアカウント情報を指定する必要があります。
+
+・コンテナーを作成する
+	・BlobService オブジェクトを使用して、コンテナーおよび BLOB を操作できます。
+	 	次のコードでは、 BlobService オブジェクトを作成します。
+	・var blobSvc = azure.createBlobService();
+	・注意
+		createBlobServiceAnonymous を使用してホスト アドレスを指定すると、BLOB に匿名でアクセスできます。 
+		たとえば、 var blobSvc = azure.createBlobServiceAnonymous('https://myblob.blob.core.windows.net/');を使用します。
+
+・Azure Storage のどの BLOB もコンテナーに格納する必要があります。 コンテナーは、BLOB 名の一部を形成しています。
+ たとえば、次の BLOB の URI のサンプルでは、 mycontainer がコンテナーの名前です。
+	https://storagesample.blob.core.windows.net/mycontainer/blob1.txt
+	https://storagesample.blob.core.windows.net/mycontainer/photos/myphoto.jpg
+
+・コンテナー名は有効な DNS 名で、DNS名前規則に準拠している必要があります。
+	コンテナ名はすべて小文字！
+
+・新しいコンテナーを作成するには、 createContainerIfNotExistsを使用します。 
+	次のコード例では、'mycontainer' という名前の新しいコンテナーを作成します。
+	blobSvc.createContainerIfNotExists('mycontainer', function(error, result, response){
+    	if(!error){
+      		// Container exists and is private
+    	}
+	});
+
+・コンテナーへのアクセス制限
+	・既定では、新しいコンテナーはプライベートであり、匿名でアクセスすることはできません。
+		コンテナーを公開して匿名でアクセスできるようにするには、
+		コンテナーのアクセス レベルを blob または container に設定します。
+		・blob - BLOB の内容およびこのコンテナー内のメタデータへの匿名の読み取りは許可されますが、
+			1 つのコンテナー内の全 BLOB のリストなど、コンテナーのメタデータに対する匿名読み取りは許可されません。
+		・container - コンテナーのメタデータに加えて、BLOB の内容とメタデータに対する匿名読み取りが許可されます。
+		・次のコード例では、アクセス レベルを blobに設定する方法を示します。
+			blobSvc.createContainerIfNotExists('mycontainer', {publicAccessLevel : 'blob'}, function(error, result, response){
+			    if(!error){
+      				// Container exists and allows
+      				// anonymous read access to blob
+      				// content and metadata within this container
+    			}
+			});
+
+		・その他の方法：setContainerAcl を使用してコンテナーのアクセス レベルを変更できます。
+			次のコード例では、アクセス レベルを container に変更します。
+			blobSvc.setContainerAcl('mycontainer', null /* signedIdentifiers */, {publicAccessLevel : 'container'} /* publicAccessLevel*/, function(error, result, response){
+  				if(!error){
+					// Container access level set to 'container'
+				}
+			});
+			結果には、コンテナーの現在の ETag 情報を含む、操作に関する情報が含まれます。
+
+
+・ページ blob
+	・注意
+		ページ blob は、512 バイトの "ページ" で構成されています。 
+		512 の倍数でないサイズのデータをアップロードするとエラーが発生します。
+	・データをページ blob にアップロードするメソッド
+		・createPageBlob - 						指定の長さの新しいページ blob を作成します。
+		・createPageBlobFromLocalFile - 		新しいページ blob を作成してファイルの内容をアップロードします。
+		・createPageBlobFromStream - 			新しいページ blob を作成してストリームの内容をアップロードします。
+		・createWriteStreamToExistingPageBlob - 既存のページ blob への書き込みストリームを提供します。
+		・createWriteStreamToNewPageBlob - 		新しいページ BLOB を作成してから、その BLOB に書き込むストリームを提供します。
+	・次のコード例では、test.txt ファイルの内容を mypageblob にアップロードします。
+		blobSvc.createPageBlobFromLocalFile('mycontainer', 'mypageblob', 'test.txt', function(error, result, response){
+			if(!error){
+				// file uploaded
+			}
+		});
+
+

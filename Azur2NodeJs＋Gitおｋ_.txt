@@ -1,0 +1,61 @@
+Azureポータルサイトにて
+
+①新たなApp seviceを作成する。
+　まず、「空のNodeJs　Webアプリを作成」
+
+ [Microsoft Azure]→[すべてのリソース]→[New(＋追加)]
+  『Node JS Empty Web App』選択
+ [アプリ名:QuwansMap]入力
+ [サブスクリプション:qwansSubscription03]指定
+ [リソースグループ:新規作成:QuwansMap]
+ [App Service プラン/場所:quwansAppServicePlan(Japan West:Free)]選択
+ [Applicatuiib Insights:オフ]
+ →【作成】実行→デブロイ実行→正常終了
+
+②作成したApp Service(WebApp)『QuwansMap』のデブロイ情報の設定変更
+ [全てのリソース]→[QuwansMap]→[デプロイ オプション]選択
+ 『node js empty site GitHub アクティブ』となっているの変更する。
+ 上部のメニューから、[切断]をクリック。
+ 切断後→[セットアップ]をクリック
+ [ソースの選択 必要な設定の構成]をクリック
+ 『Git Hub』を選択　※後でローカル Git リポジトリでやってみること。
+ [ソースの選択:GitHub][承認:osamu3][組織の選択:パーソナル(osamu3)]→
+ [プロジェクトの選択:quwnsMap]
+ [ブランチの選択:master]
+ [パフォーマンス テスト:未構成]
+ 【OK】クリック
+
+③『QuwansMap』の設定情報確認
+ [AppService]→[QuwansMap]→[概要]選択
+ [GitHub プロジェクト]が《https://github.com/osamu3/quwansMap》になっていることを確認
+ 表示されたURL"http://quwansmap.azurewebsites.net"をクリックしてWebサイトができているのを
+
+④GitHubにアクセス
+　 リポジトリ《https://github.com/osamu3/quwansMap》ができているの確認
+
+⑤Gitデブロイテスト《Windows PowerShell起動》
+ ローカルリポジトリを作成するディレクトリ[C:\Users\NEC-PCuser\OneDrive\kkr>]に移動
+ 【git clone https://github.com/osamu3/quwansMap】実行
+ 【cd quwansMap】
+ 【git remote -v】
+  >> origin  https://github.com/osamu3/quwansMap (fetch)
+  >> origin  https://github.com/osamu3/quwansMap (push)
+      ↑これを、https://github.com/osamu3/quwansMap.gitにする必要があるのかな？？
+       (?:git remote add origin https://github.com/osamu3/quwansNodeJs01.git)
+
+  《index.jsを編集》
+  【git add .】
+  【git commit -am "1st Commit"】
+  【git push -u origin master】
+
+⑥コーティン準備
+  npm install express --save
+  npm install gulp-ejs --save
+
+⑦Azure Storage利用準備
+　npm install --save azure-storage
+
+
+
+git commit -am "コミットそのX"
+npm install --save gulp-ejs

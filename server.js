@@ -59,7 +59,7 @@ io.sockets.on('connection', function (socket){
 //	handleError(error);
 
 	console.log('Text writing\n');
-	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, "text text5", function(error){
+	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, "text text text text 6", function(error){
 		handleError(error);
 
 		console.log('4. Listing blobs in container\n');

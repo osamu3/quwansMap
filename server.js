@@ -12,7 +12,7 @@ var connectionString = 'DefaultEndpointsProtocol=https;AccountName=cs4fe87546c74
 var blobService = storage.createBlobService(connectionString);
 var CONTAINER_NAME = 'container01';
 //書き込むファイル(ブロブ)名 
-var BLOCK_BLOB_NAME = 'blobcreatetestfile5.txt';
+var BLOCK_BLOB_NAME = 'blobcreatetestfile6.txt';
 
 
 var port = process.env.PORT || 1337;

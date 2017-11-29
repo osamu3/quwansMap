@@ -1,0 +1,9 @@
+azure コンソール
+
+
+App Service→ 診断ログで取得対象ログセット
+App Service→ログストリームでログを見る
+
+App service editor でDos風画面及びログ取得
+行き方：ResourceGroups->アプリ名(App Service)->開発ツール->App Service Editor
+直接【WWWROOT】を編集できる

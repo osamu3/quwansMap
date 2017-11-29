@@ -2,10 +2,9 @@ var map;
 var svp;//ストリートビューパノラマオブジェクト
 var svs;//ストリートビューサービスオブジェクト
 var currentLatLng;//現在の緯度経度を一時保存
+var pointArr = [];
 
 jQuery(function ($) {
-	var pointArr = [];
-
 	pointArr[0] = {
 		latlng: new google.maps.LatLng(35.29757974932173, 135.13061450299858),
 		heading: 78.9508155097113,
@@ -176,6 +175,8 @@ function processSVData(data, status) {
 
 function funcTest(){
 	alert('これはテストです');
+	alert(pointArr[0]);
+	alert(JSON.stringify(pointArr,undefined,4));
 	var latLng = new google.maps.LatLng(35.627223, 139.77401299999997);
 	svp.setPosition( latLng);
 	map.panTo(latLng);

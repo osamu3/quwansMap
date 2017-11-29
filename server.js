@@ -50,6 +50,7 @@ io.sockets.on('connection', function (socket){
 
 });
 
+/*
 blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
 	handleError(error);
 
@@ -77,6 +78,7 @@ blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'b
 		}
 	}
 }
+*/
 
 function handleError(error) {
   if (error) {

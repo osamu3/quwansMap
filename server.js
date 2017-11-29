@@ -40,17 +40,14 @@ app.use(express.static('public'));	//パス文字列無しで"public"を使用�
 io.sockets.on('connection', function (socket){
 	//↓接続時に一度だけ実行
 	console.log('クライアントの接続がありました。');
-	socket.emit('S2C_Msg', 'hello! client');
+	socket.emit('S2C_Msg', 'hello!!! client');
 
 	//　クライアントからemitされた時のイベント
 	socket.on('C2S_Msg', function (msg){
-		console.log('クライアントからのメッセージを受け取りました。メッセージは:', msg);
+		console.log('Get:C->S:クライアントのメッセージは:', msg);
 		//クライアントへサーバー側の./public/dataJson内容を返す
-		fs.readdir('./public/dataJson', function(err, files){
-  		if (err) throw err;
-			socket.emit("S2C_Msg",files);
-	  		console.log('サーバーからクライアントへブロードキャスト');
-		});
+  		console.log('Send:S->C:サーバーからクライアントへ返信');
+		socket.emit("S2C_Msg","サーバーからクライアントへ返信:"+msg);
 	});
 
 });
@@ -58,6 +55,7 @@ io.sockets.on('connection', function (socket){
 //blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
 //	handleError(error);
 
+function createTextBlob(){
 	console.log('Text writing\n');
 	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, "text text text text 6", function(error){
 		handleError(error);
@@ -72,37 +70,7 @@ io.sockets.on('connection', function (socket){
 			console.log('\n');
 		});
 	});
-//});
-
-/*
-blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
-	handleError(error);
-
-	var CONTAINER_NAME = 'container01';
-	var BLOCK_BLOB_NAME = 'blobcreatetestfile.txt';
-
-	console.log('1. Creating a container with public access:', CONTAINER_NAME, '\n');
-
-	console.log('*2. Creating a file in ~/Documents folder to test the upload and download\n');
-
-	console.log('3. Uploading BlockBlob:', BLOCK_BLOB_NAME, '\n');
-	blobService.createBlockBlobFromLocalFile(CONTAINER_NAME, BLOCK_BLOB_NAME, "blobcreatetestfile.txt", function (error) {
-	//blobService.createBlockBlobFromText(CONTAINER_NAME, blob, 'HelloWorld', function(error) {
-	    handleError(error);
-		console.log('   Uploaded Blob URL:', blobService.getUrl(CONTAINER_NAME, BLOCK_BLOB_NAME), '\n');
-
-		console.log('4. Listing blobs in container\n');
-    	blobService.listBlobsSegmented(CONTAINER_NAME, null, function (error, data) {
-			handleError(error);
-
-			for (var i = 0; i < data.entries.length; i++) {
-				console.log("name: "+ data.entries[i].name+"blobType: "+ data.entries[i].blobType);
-			}
-			console.log('\n');
-		}
-	}
 }
-*/
 
 function handleError(error) {
   if (error) {

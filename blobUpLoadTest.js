@@ -26,32 +26,31 @@ var DOWNLOADED_FILE_PATH = path.join(DOCUMENT_FOLDER, DOWNLOADED_FILE_NAME);
 */
 
 var CONTAINER_NAME = 'container01';
-var BLOCK_BLOB_NAME = 'blobcreatetestfile.txt';
+// 書き込むファイル(ブロブ)名 var BLOCK_BLOB_NAME = 'blobcreatetestfile2.txt';
 
 console.log('Azure Storage Node.js Client Library Blobs Quick Start\n');
 
 console.log('1. Creating a container with public access:', CONTAINER_NAME, '\n');
 blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
-  handleError(error);
+	handleError(error);
 
-  console.log('*2. Creating a file in ~/Documents folder to test the upload and download\n');
+//	console.log('*2. Creating a file in ~/Documents folder to test the upload and download\n');
 
-  console.log('3. Uploading BlockBlob:', BLOCK_BLOB_NAME, '\n');
-  blobService.createBlockBlobFromLocalFile(CONTAINER_NAME, BLOCK_BLOB_NAME, "blobcreatetestfile.txt", function (error) {
-    handleError(error);
-    console.log('   Uploaded Blob URL:', blobService.getUrl(CONTAINER_NAME, BLOCK_BLOB_NAME), '\n');
+//	console.log('3. Uploading BlockBlob:', BLOCK_BLOB_NAME, '\n');
+//	blobService.createBlockBlobFromLocalFile(CONTAINER_NAME, BLOCK_BLOB_NAME, "blobcreatetestfile.txt", function (error) {
+//	handleError(error);
+//	console.log('   Uploaded Blob URL:', blobService.getUrl(CONTAINER_NAME, BLOCK_BLOB_NAME), '\n');
 
-    console.log('4. Listing blobs in container\n');
-    blobService.listBlobsSegmented(CONTAINER_NAME, null, function (error, data) {
-      handleError(error);
+	console.log('4. Listing blobs in container\n');
+	blobService.listBlobsSegmented(CONTAINER_NAME, null, function (error, data) {
+		handleError(error);
 
-      for (var i = 0; i < data.entries.length; i++) {
-        console.log("name: "+ data.entries[i].name+"blobType: "+ data.entries[i].blobType);
-      }
-      console.log('\n');
+		for (var i = 0; i < data.entries.length; i++) {
+			console.log("name: "+ data.entries[i].name+"blobType: "+ data.entries[i].blobType);
+		}
+		console.log('\n');
 
-
-      console.log('*5. Downloading blob\n');
+//		console.log('*5. Downloading blob\n');
 /*      blobService.getBlobToLocalFile(CONTAINER_NAME, BLOCK_BLOB_NAME, DOWNLOADED_FILE_PATH, function (error) {
         handleError(error);
         console.log('   Downloaded File:', DOWNLOADED_FILE_PATH, '\n');
@@ -73,8 +72,8 @@ blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'b
        });
       });
 */
-    });
-  });
+//		});
+	});
 });
 
 function handleError(error) {

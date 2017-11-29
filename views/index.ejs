@@ -1,40 +1,41 @@
 ﻿<!DOCTYPE html>
 <html lang="ja">
-  <head>
-		<meta charset="UTF-8">
-		<title>GSI tiles with leaflet　by osamu</title>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-    <link rel="stylesheet" href="css/map.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-    <script src='http://code.jquery.com/jquery-1.11.1.min.js'></script>
-  </head>
-  <body>
-		<table border="1">
-			<tr>
-				<td>
-					<!-- データスクロール-->
-					<div style="height:300px; width:350px; overflow-y:scroll;">
-						<table border="2">
-							<thead>
-    							<tr><th class="Lat">緯度</th><th class="Lng">経度</th></tr>
-							</thead>
-							<tbody id="dataRange">
-								<tr><td class="Lat">123</td><td class="Lng">987</td></tr>
-								<tr><td class="Lat">123</td><td class="Lng">987</td></tr>
-							<tbody>
-						</table>
-					</div>
-				</td>
-				<td>
-				    <div id="map"></div>
-				</td>
-			</tr>
-		</table>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<meta name="robots" content="noindex,nofollow,noarchive"/>
+		<title>Google Maps Street View サンプル</title>
 
+		<!--ブートストラップ読み込み -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/GmapStyleSeet.css">
 
+		<script src='http://code.jquery.com/jquery-1.11.1.min.js'></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAT1CHvQkiTKOdPbmJp2gOpqDIblMgzfI"></script>
+
+		<script type="text/javascript" src="js/GmapStreetVeiw.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
-    <script src='js/initMap.js'></script>
+	    <script src='js/initSocketIO.js'></script>
+
+	</head>
+	<body>
+<h1> 画面右に、現在地をマークするためのボタンを登録。ストリートビュー画面にカメラの向きが「上り」「下り」を表示 </h1>
+		<div class ="row">
+			<div class="col-sm-2"><!--2割bootstrapパラメータ -->
+				<p>
+					<button type="button" onclick=funcTest()>
+						<img src="img/mark.gif" alt="［！］" width="20" height="20"><br>
+						アラート
+					</button>
+				</p>
+				<div id="pointList"></div>
+				<div id="currentLatLng"></div>
+			</div>
+			<div class="col-sm-10"><!--10割bootstrapパラメータ -->
+				<div id="mapCanvas"></div>
+				<div id="mapView"></div>
+			</div>
+		</div>
+
 <!--
     <script>
       var socket = io();

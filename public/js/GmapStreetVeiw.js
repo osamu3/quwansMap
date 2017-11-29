@@ -142,35 +142,35 @@ jQuery(function ($) {
 		// 画像あり。ストリートビューを表示する
 
 function processSVData(data, status) {
-  if (status === 'OK') {//// 画像あり→マーカーを立て、ストリートビューを表示する
-    var marker = new google.maps.Marker({
-      position: data.location.latLng,
-      map: map,
-      title: data.location.description
-    });
+	if (status === 'OK') {//// 画像あり→マーカーを立て、ストリートビューを表示する
+		var marker = new google.maps.Marker({
+			position: data.location.latLng,
+			map: map,
+			title: data.location.description
+		});
 
-    svp.setPano(data.location.pano);
-	// ストリートビューの表示が完了した後、カメラの向きを調整する必要あり
-	//cf:http://scientre.hateblo.jp/entry/20150331/streetview_image
-    //svp.setPov({
-    //  heading: 270,
-    //  pitch: 0
-    //});
-    svp.setVisible(true);
+		svp.setPano(data.location.pano);
+		// ストリートビューの表示が完了した後、カメラの向きを調整する必要あり
+		//cf:http://scientre.hateblo.jp/entry/20150331/streetview_image
+	    //svp.setPov({
+	    //  heading: 270,
+	    //  pitch: 0
+		//});
+		svp.setVisible(true);
 
-    marker.addListener('click', function() {
-      var markerPanoID = data.location.pano;
-      // Set the Pano to use the passed panoID.
-      svp.setPano(markerPanoID);
-      svp.setPov({
-        heading: 270,
-        pitch: 0
-      });
-      svp.setVisible(true);
-    });
-  } else {
-    console.log('Street View data not found for this location.');
-}
+		marker.addListener('click', function() {
+			var markerPanoID = data.location.pano;
+			// Set the Pano to use the passed panoID.
+			svp.setPano(markerPanoID);
+			svp.setPov({
+				heading: 270,
+				pitch: 0
+			});
+			svp.setVisible(true);
+		});
+	} else {
+		console.log('Street View data not found for this location.');
+	}
 }
 
 function funcTest(){

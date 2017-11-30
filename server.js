@@ -44,9 +44,8 @@ io.sockets.on('connection', function (socket){
 	//【受信イベント定義】イベント名:C2S:SaveListToBlob
 	socket.on('C2S:SaveLatLngListToBlob', function (latLngLst){
 		//クライアントからsocketIOで送られてきたリスト(緯度経度)をブロブに書き込み
-//  		console.log('Blobへ書き込み:'+latLngLst);
-		createTextBlob(latLngLst,);
-		createTextBlob(latLngLst,function(){//←コールバック関数内でクライアントへソケットメッセージ送信
+//  	console.log('Blobへ書き込み:'+latLngLst);
+		createTextBlob(latLngLst,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
 	 		console.log('Send:S->C:サーバーからクライアントへ返信');
 			socket.emit("S2C:Msg","緯度経度リスト保存完了");
 		});

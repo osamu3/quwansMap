@@ -142,12 +142,14 @@ jQuery(function ($) {
 		// 画像あり。ストリートビューを表示する
 
 function processSVData(data, status) {
-	if (status === 'OK') {//// 画像あり→マーカーを立て、ストリートビューを表示する
+	if (status === 'OK') {//// ストリートビュー画像あり→マーカーを立て、ストリートビューを表示する
+		/*マーカーを立てるのは、止めた
 		var marker = new google.maps.Marker({
 			position: data.location.latLng,
 			map: map,
 			title: data.location.description
 		});
+		*/
 
 		svp.setPano(data.location.pano);
 		// ストリートビューの表示が完了した後、カメラの向きを調整する必要あり
@@ -158,6 +160,7 @@ function processSVData(data, status) {
 		//});
 		svp.setVisible(true);
 
+		/*マーカーにイベントリストを登録
 		marker.addListener('click', function() {
 			var markerPanoID = data.location.pano;
 			// Set the Pano to use the passed panoID.
@@ -168,7 +171,9 @@ function processSVData(data, status) {
 			});
 			svp.setVisible(true);
 		});
-	} else {
+		*/
+
+	} else {//クリックした位置には、ストリートビュー画像がなかった
 		console.log('Street View data not found for this location.');
 	}
 }
@@ -179,7 +184,9 @@ function saveLatLngListToBlob(){
 	//alert(JSON.stringify(pointArr));
 	////ソケットIOを利用して、カレント緯度経度をブロブに保存
 	//saveLatLngListToBlobWithSocket($("#pointList").html());
+
 	saveLatLngListToBlobWithSocket(pointArr);
+
 	//alert(JSON.stringify(pointArr,undefined,4));
 
 	var latLng = new google.maps.LatLng(35.627223, 139.77401299999997);

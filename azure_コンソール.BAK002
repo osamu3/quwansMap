@@ -1,0 +1,6 @@
+azure コンソール
+
+App service editor でDos風画面及びログ取得
+
+App Service→ 診断ログで取得対象ログセット
+App Service→ログストリームでログを見る

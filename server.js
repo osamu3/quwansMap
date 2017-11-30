@@ -12,8 +12,7 @@ var connectionString = 'DefaultEndpointsProtocol=https;AccountName=cs4fe87546c74
 var blobService = storage.createBlobService(connectionString);
 var CONTAINER_NAME = 'container01';
 //書き込むファイル(ブロブ)名 
-var BLOCK_BLOB_NAME = 'blobcreatetestfile6.txt';
-
+var BLOCK_BLOB_NAME = 'latLngLst.json';
 
 var port = process.env.PORT || 1337;
 
@@ -46,7 +45,9 @@ io.sockets.on('connection', function (socket){
 	socket.on('C2S_Msg', function (msg){
 		console.log('Get:C->S:クライアントのメッセージは:', msg);
 		//クライアントへサーバー側の./public/dataJson内容を返す
-  		console.log('Send:S->C:サーバーからクライアントへ返信');
+  		console.log('Blobへ書き込み');
+		createTextBlob(msg);
+ 		console.log('Send:S->C:サーバーからクライアントへ返信');
 		socket.emit("S2C_Msg","サーバーからクライアントへ返信:"+msg);
 	});
 
@@ -55,9 +56,10 @@ io.sockets.on('connection', function (socket){
 //blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
 //	handleError(error);
 
-function createTextBlob(){
-	console.log('Text writing\n');
-	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, "text text text text 6", function(error){
+function createTextBlob(msg){
+	console.log('writing MSG = '+ msg + '\n');
+
+	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, JSON.stringify(msg), function(error){
 		handleError(error);
 
 		console.log('4. Listing blobs in container\n');

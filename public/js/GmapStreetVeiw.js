@@ -174,8 +174,12 @@ function processSVData(data, status) {
 }
 
 function funcTest(){
-	alert('サーバーへsocketで、メッセージを送ります。');
-	sendMsg("C->S:クライント → サーバー");
+
+	//$('#TestMsg').
+	//$("#input要素のid").val()
+	alert("来たのか？");
+	alert($("#currentLatLng").html());
+	sendMsg($("#currentLatLng").html());
 	//alert(JSON.stringify(pointArr,undefined,4));
 	var latLng = new google.maps.LatLng(35.627223, 139.77401299999997);
 	svp.setPosition( latLng);

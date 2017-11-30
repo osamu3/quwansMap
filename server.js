@@ -39,30 +39,33 @@ app.use(express.static('public'));	//パス文字列無しで"public"を使用�
 io.sockets.on('connection', function (socket){
 	//↓接続時に一度だけ実行
 	console.log('クライアントの接続がありました。');
-	socket.emit('S2C_Msg', 'hello!!! client');
+	socket.emit('S2C:Msg', 'hello----!!! client');
 
-	//　クライアントからemitされた時のイベント
-	socket.on('C2S_Msg', function (msg){
-		console.log('Get:C->S:クライアントのメッセージは:', msg);
-		//クライアントへサーバー側の./public/dataJson内容を返す
-  		console.log('Blobへ書き込み');
-		createTextBlob(msg);
- 		console.log('Send:S->C:サーバーからクライアントへ返信');
-		socket.emit("S2C_Msg","サーバーからクライアントへ返信:"+msg);
+	//【受信イベント定義】イベント名:C2S:SaveListToBlob
+	socket.on('C2S:SaveLatLngListToBlob', function (latLngLst){
+		//クライアントからsocketIOで送られてきたリスト(緯度経度)をブロブに書き込み
+//  		console.log('Blobへ書き込み:'+latLngLst);
+		createTextBlob(latLngLst,);
+		createTextBlob(latLngLst,function(){//←コールバック関数内でクライアントへソケットメッセージ送信
+	 		console.log('Send:S->C:サーバーからクライアントへ返信');
+			socket.emit("S2C:Msg","緯度経度リスト保存完了");
+		});
 	});
-
 });
 
 //blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
 //	handleError(error);
 
-function createTextBlob(msg){
-	console.log('writing MSG = '+ msg + '\n');
-
-	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, JSON.stringify(msg), function(error){
+//Blobへの書き込み関数を定義
+var createTextBlob = function (writeDt,aCllback){
+	//console.log('書き込みデータ確認 = \n'+ JSON.stringify(writeDt,undefined,2) + '\n\n');
+								//文法：JSON.stringify(value[, replacer[, space]])　replacerを[undefined]とすることで、第二引数を省略
+	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, JSON.stringify(writeDt,undefined,2), function(error){
 		handleError(error);
 
-		console.log('4. Listing blobs in container\n');
+		aCllback();//呼び出し側の関数(コールバック)をここで実行
+
+		/*console.log('コンテナ内のファイル(blob)を一覧を表示\n');
 		blobService.listBlobsSegmented(CONTAINER_NAME, null, function (error, data) {
 			handleError(error);
 
@@ -71,6 +74,7 @@ function createTextBlob(msg){
 			}
 			console.log('\n');
 		});
+		*/
 	});
 }
 

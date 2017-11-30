@@ -173,14 +173,15 @@ function processSVData(data, status) {
 	}
 }
 
-function funcTest(){
-
-	//$('#TestMsg').
-	//$("#input要素のid").val()
-	alert("来たのか？");
-	alert($("#currentLatLng").html());
-	sendMsg($("#currentLatLng").html());
+//ボタンクリックで発火
+function saveLatLngListToBlob(){
+	//alert($("#pointList").html());
+	//alert(JSON.stringify(pointArr));
+	////ソケットIOを利用して、カレント緯度経度をブロブに保存
+	//saveLatLngListToBlobWithSocket($("#pointList").html());
+	saveLatLngListToBlobWithSocket(pointArr);
 	//alert(JSON.stringify(pointArr,undefined,4));
+
 	var latLng = new google.maps.LatLng(35.627223, 139.77401299999997);
 	svp.setPosition( latLng);
 	map.panTo(latLng);

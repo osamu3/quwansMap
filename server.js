@@ -41,39 +41,40 @@ io.sockets.on('connection', function (socket){
 	console.log('クライアントの接続がありました。');
 	socket.emit('S2C:Msg', 'hello----!!! client');
 
-	//【受信イベント定義】イベント名:C2S:SaveListToBlob
-	socket.on('C2S:SaveLatLngListToBlob', function (latLngLst){
-		//クライアントからsocketIOで送られてきたリスト(緯度経度)をブロブに書き込み
-//  	console.log('Blobへ書き込み:'+latLngLst);
-		createTextBlob(latLngLst,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
-	 		console.log('Send:S->C:サーバーからクライアントへ返信');
+	//========【受信イベント定義】========
+	//        【緯度経度リスト要求】
+	socket.on('C2S:sendRequest_LatLngList', function (){
+		//クライアントからの緯度経度List送信要求にたいして、Blobからリストを取り出し、クライアントへ送る
+		readLatLngListFromBlob(function(listData){//←コールバック関数でクライアントへソケットでデータ送信
+			socket.emit("S2C:SendLatLngLst",listData);
+		});
+	});
+
+	//         【緯度経度リスト保存】
+	socket.on('C2S:PostLatLngList', function (latLngLst){
+		createTextBlob(latLngList,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
+	 		//console.log('Send:S->C:サーバーからクライアントへ返信');
 			socket.emit("S2C:Msg","緯度経度リスト保存完了");
 		});
 	});
 });
 
-//blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
-//	handleError(error);
-
-//Blobへの書き込み関数を定義
+//Blobへの読み込み関数を定義
 var createTextBlob = function (writeDt,aCllback){
-	//console.log('書き込みデータ確認 = \n'+ JSON.stringify(writeDt,undefined,2) + '\n\n');
 								//文法：JSON.stringify(value[, replacer[, space]])　replacerを[undefined]とすることで、第二引数を省略
 	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, JSON.stringify(writeDt,undefined,2), function(error){
 		handleError(error);
-
 		aCllback();//呼び出し側の関数(コールバック)をここで実行
+	});
+}
 
-		/*console.log('コンテナ内のファイル(blob)を一覧を表示\n');
-		blobService.listBlobsSegmented(CONTAINER_NAME, null, function (error, data) {
-			handleError(error);
-
-			for (var i = 0; i < data.entries.length; i++) {
-				console.log("name: "+ data.entries[i].name+"blobType: "+ data.entries[i].blobType);
-			}
-			console.log('\n');
-		});
-		*/
+//Blobへの書き込み関数を定義
+//cf：https://docs.microsoft.com/ja-jp/azure/storage/blobs/storage-nodejs-how-to-use-blob-storage#upload-a-blob-into-a-container
+var readLatLngListFromBlob = function (aCllback){
+	blobService.getBlobToText(CONTAINER_NAME, BLOCK_BLOB_NAME, function(error, result, response){
+		handleError(error);
+		//呼び出し時にセットしたコールバック関数:『socket.emit("S2C:SendLatLngLst",listData)』実行
+		aCllback(result);//result===listData
 	});
 }
 

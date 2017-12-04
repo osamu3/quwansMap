@@ -6,6 +6,8 @@
 }
 #pointList {
 	margin-top: 10px;
+	background-color: #aaaaaa;
+	color = 'cornflowerblue';
 }
 .mapPoint {
 	padding: 10px 10px;

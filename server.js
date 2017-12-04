@@ -51,19 +51,21 @@ io.sockets.on('connection', function (socket){
 	});
 
 	//         【緯度経度リスト保存】
-	socket.on('C2S:PostLatLngList', function (latLngLst){
-		createTextBlob(latLngList,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
-	 		//console.log('Send:S->C:サーバーからクライアントへ返信');
+	socket.on('C2S:SaveLatLngListToBlob', function (latLngLst){
+		console.log("きたきた:"+latLngLst);
+		createJsonToBlob(latLngLst,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
+	 		console.log('Send:S->C:サーバーからクライアントへ保存完了を返信');
 			socket.emit("S2C:Msg","緯度経度リスト保存完了");
 		});
 	});
 });
 
 //Blobへの読み込み関数を定義
-var createTextBlob = function (writeDt,aCllback){
+var createJsonToBlob = function (writeDt,aCllback){
 								//文法：JSON.stringify(value[, replacer[, space]])　replacerを[undefined]とすることで、第二引数を省略
 	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, JSON.stringify(writeDt,undefined,2), function(error){
 		handleError(error);
+ 		console.log('Blobへの保存成功');
 		aCllback();//呼び出し側の関数(コールバック)をここで実行
 	});
 }

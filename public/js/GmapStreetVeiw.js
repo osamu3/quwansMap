@@ -6,23 +6,9 @@ var pointArr = [];
 var BtnCnt = 1;
 
 jQuery(function ($) {
-
-sendRequest_LatLngList();
-/*以下、ソケットIOメッセージ受信イベントに移動
-	//初期設定：リストに登録
-	$("#pointList").append("<ul>");
-	for (var point in pointArr) {
-		var html = '<a><li class="mapPoint" id="pointListClickEventMethod' + BtnCnt + '">' + pointArr[point].title + '</li></a>'
-		$("#pointList").append(html);
-		//ポイントリストをクリックしたときのイベントを登録、及びそのイベントファンクションに渡すデータオブジェクトを設定
-		//cf:調査範囲.on( イベント名, セレクタ, object, function):http://www.jquerystudy.info/reference/events/on.htmlより
-		$("body").on("click", "#pointListClickEventMethod" + BtnCnt, {opt: BtnCnt - 1}, function (eo) {
-			map_pan(eo.data.opt);//ファンクションに渡されたデータオブジェクトは、【eo.data.opt】で参照できる。
-		});
-		BtnCnt++;
-	}
-	$("#pointList").append("</ul");
- */
+	//最初の緯度経度リストをサーバーのBlobからダウンロード
+	//サーバーへのBlobの緯度経度リスト送信リクエスト。応答は、socketIOで送受信
+	sendRequest_LatLngListFromBlobWithSocket();
 	google.maps.event.addDomListener(window, 'load', initialize);
 	function initialize() {
 		var opts = {
@@ -101,10 +87,10 @@ sendRequest_LatLngList();
 	}
  });
 
-function map_pan(no) {
-	svp.setPosition(pointArr[no].latlng);
-	svp.setPov({heading: pointArr[no].heading, pitch: pointArr[no].pitch, zoom: pointArr[no].zoom});
-	map.panTo(pointArr[no].latlng);
+function map_pan(latlngId) {
+	svp.setPosition(pointArr[latlngId].latlng);
+	svp.setPov({heading: pointArr[latlngId].heading, pitch: pointArr[latlngId].pitch, zoom: pointArr[latlngId].zoom});
+	map.panTo(pointArr[latlngId].latlng);
 }
 
 
@@ -140,6 +126,36 @@ function processSVData(data, status) {
 	}
 }
 
+//ボタンクリックで発火
+function postLatLngListToBlob(){
+	//alert($("#pointList").html());
+	//alert(JSON.stringify(pointArr));
+	////ソケットIOを利用して、カレント緯度経度をブロブに保存
+	//saveLatLngListToBlobWithSocket($("#pointList").html());
+
+	//ここを＊＊＊＊＊＊＊＊＊＊＊＊＊↓latLangListにする
+	postLatLngListToBlobWithSocket(points);
+	//alert(JSON.stringify(pointArr,undefined,4));
+};
+
+//リスト削除ボタンクリックで発火
+function deleteLatLngListItem(){
+	////ソケットIOを利用して、緯度経度リストをブロブに保存
+	var delPointId;
+	var selector;
+	$(".mapPoint").each(function() {
+		if($(this).css('fontWeight') == '700'){//フォントスタイルボールドのリストををセレクト
+			if(confirm($(this).text()+'を削除しますか？')){
+				console.log("indexは:"+$(this).index());
+				selector = '#'+$(this).attr("id");
+				delPointId= $(selector).index("li");//リストから削除する対象の番号を取得
+				$(this).remove();
+				pointArr.splice(delPointId, 1); // リストから削除
+		
+			}
+		}
+	});
+}
 
 //リスト追加ボタンクリックで発火
 function addLatLngListItem(){
@@ -173,19 +189,6 @@ function addLatLngListItem(){
 		//マーカーにイベントリストを登録 ===>不必要とする。
 		//marker.addListener('click', function() {//var markerPanoID = data.location.pano;// Set the Pano to use the passed panoID.
 		//	svp.setPano(svp.getPano);svp.setPov(svp.getPov);{heading: 270,pitch: 0});svp.setVisible(true);		});
-	}
-}
-
-function sendRequest_LatLngList(){
-	 sendRequest_LatLngListFromBlobWithSocket();
-//	alert("取得データ="+JSON.stringify(pointArr,undefined,2));
-//	alert("取得データ="+pointArr);
-}
-//リスト保存ボタンクリックで発火
-function postLatLngList(){
-	if(confirm('サーバーに、緯度経度リストを保存しますか？')){
-		////ソケットIOを利用して、緯度経度リストをブロブに保存
-		postLatLngListToBlobWithSocket(pointArr);
 	}
 }
 

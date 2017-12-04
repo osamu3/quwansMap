@@ -21,7 +21,7 @@
 		<div class ="row">
 			<div class="col-sm-2"><!--2割bootstrapパラメータ -->
 				<p>
-					<button type="button" onclick=postLatLngList()>
+					<button type="button" onclick=postLatLngListToBlob()>
 						<img src="img/mark.gif" alt="［！］" width="20" height="20"><br>
 						保存
 					</button>
@@ -29,8 +29,12 @@
 						<img src="img/mark.gif" alt="［！］" width="20" height="20"><br>
 						追加
 					</button>
+					<button type="button" onclick=deleteLatLngListItem()>
+						<img src="img/mark.gif" alt="［！］" width="20" height="20"><br>
+						削除
+					</button>
 				</p>
-				<div id="pointList"></div>
+				<div id="pointList" class="latLangList"></div>
 				<div id="currentLatLng"></div>
 			</div>
 			<div class="col-sm-10"><!--10割bootstrapパラメータ -->

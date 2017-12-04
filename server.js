@@ -51,8 +51,7 @@ io.sockets.on('connection', function (socket){
 	});
 
 	//         【緯度経度リスト保存】
-	socket.on('C2S:SaveLatLngListToBlob', function (latLngLst){
-		console.log("きたきた:"+latLngLst);
+	socket.on('C2S:postLatLngListToBlob', function (latLngLst){
 		createJsonToBlob(latLngLst,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
 	 		console.log('Send:S->C:サーバーからクライアントへ保存完了を返信');
 			socket.emit("S2C:Msg","緯度経度リスト保存完了");

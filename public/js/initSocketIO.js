@@ -22,7 +22,7 @@ var points = {
 		heading: -35.77428934912274,
 		pitch: 54.77805451608379,
 		zoom: 0,
-		title: "スカイツリー前"
+		title: "スカイツリー"
 	},
 
 	nYrnfYEv:{
@@ -104,7 +104,7 @@ function postLatLngListToBlobWithSocket(latLngLst) {
 	if(confirm('サーバーに、緯度経度リストを保存しますか？')){
 		////ソケットIOを利用して、緯度経度リストをブロブに保存
 		console.log('   サーバーへEmit：【緯度経度リスト保存[Post]】');
-		socket.emit('C2S:SaveLatLngListToBlob', latLngLst);//
+		socket.emit('C2S:postLatLngListToBlob', latLngLst);//
 	}
 }
 

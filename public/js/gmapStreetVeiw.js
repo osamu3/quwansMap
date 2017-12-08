@@ -12,12 +12,10 @@ jQuery(function ($) {
 	sendRequest_LatLngListFromBlobWithSocket();
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
+
 	function initialize() {
-		var opts = {
-			zoom: 15,
-			center: new google.maps.LatLng( 35.29757974932173, 135.13061450299858,false ) ,
-			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			scrollwheel: true,
+		var opts = {zoom: 15,center: new google.maps.LatLng( 35.29757974932173, 135.13061450299858,false ) ,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,scrollwheel: true,
 			//clickableIcons: false //Point Of Interest(POIアイコン)クリック無効
 		};
 		currentLatLng = opts.center;//初期値の緯度経度を保存
@@ -25,48 +23,28 @@ jQuery(function ($) {
 		map = new google.maps.Map(document.getElementById("mapCanvas"), opts);
  
 		//地図上のPOIアイコンを消す。
-		var styleOptions = [{
-			featureType: "poi",
-			elementType: "labels",
-			stylers: [
-				{ visibility: "off" }
-			]}
-		];
+		var styleOptions = [{featureType: "poi",elementType: "labels",stylers: [{ visibility: "off" }]}];
 
 		map.setOptions({styles: styleOptions});
 
 		var svs = new google.maps.StreetViewService();
 		svp = new google.maps.StreetViewPanorama(
 			   document.getElementById("mapView"),
-				{
-					addressControl: true,
-					addressControlOptions: "BOTTOM_RIGHT",
-					clickToGo: true, //移動
-					disableDoubleClickZoom: true,
-					imageDateControl:true,		//撮影日の表示
+				{addressControl: true,addressControlOptions: "BOTTOM_RIGHT",clickToGo: true, //移動
+					disableDoubleClickZoom: true,imageDateControl:true,		//撮影日の表示
 					enableCloseButton: false,	//閉じるボタンの表示
-					imageDateControl: true,
-					linksControl: true,
-					panControl: true,
-					scrollwheel: true,
-					visible: true,
-					zoomControl: true,
-					position: map.getCenter()
-				});
+					imageDateControl: true,linksControl: true,panControl: true,	scrollwheel: true,visible: true,					zoomControl: true,
+					position: map.getCenter()});
 
 		//======地図クリックイベントを定義=========================
 		map.addListener('click', function(e) {
-			//移動とマーカーの登録
-			//svs.getPanorama({location: event.latLng, radius: 50}, processSVData);
+			//移動とマーカーの登録 svs.getPanorama({location: event.latLng, radius: 50}, processSVData);
 
 			//↓LatLng が渡されると、指定された領域でパノラマ データを検索し、【processSVData】関数を呼び出す。
 			svs.getPanorama({
-					// 目標物の座標
-				location: e.latLng,
-					// 指定座標からどれだけ離れた撮影地点までを選択するかメートル単位で設定。デフォルトでは50
-				radius: 50,
-					// 画像の種類を選択する。OUTDOOR ならインドアビューを除外
-				source: google.maps.StreetViewSource.OUTDOOR
+				location: e.latLng,// 目標物の座標
+				radius: 50,// 指定座標からどれだけ離れた撮影地点までを選択するかメートル単位で設定。デフォルトでは50
+				source: google.maps.StreetViewSource.OUTDOOR // 画像の種類を選択する。OUTDOOR ならインドアビューを除外
 			}, processSVData);
 			//placeMarkerAndPanTo(e.latLng);
 		});
@@ -84,7 +62,7 @@ jQuery(function ($) {
 	function review() {
 		var pos = svp.getPosition();
 		currentLatLng = pos;
-		document.getElementById("currentLatLng").innerHTML = "緯度経度：" + pos;
+		document.getElementById("currentLatLng").innerHTML = "<h6>緯度経度：" + pos+"</h6>";
 		map.panTo(pos);
 	}
 
@@ -106,11 +84,10 @@ jQuery(function ($) {
 			}
 			$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
 			$("#ulList").append(html);
-		};   
+		};
 		reader.readAsText(file);		// テキストとしてファイルを読み込む
 	});
-
- });
+});
 
 function map_pan(latlngLstId) {
 	svp.setPosition(latLngLst[latlngLstId].latlng);
@@ -128,9 +105,8 @@ function map_pan(latlngLstId) {
 
 function processSVData(data, status) {
 	if (status === 'OK') {//// ストリートビュー画像あり→マーカーを立て、ストリートビューを表示する
-		/*マーカーを立てるのは、止めた
-		var marker = new google.maps.Marker({position: data.location.latLng,map: map,title: data.location.description});
-		*/
+		//マーカーを立てるのは、止めた
+		//var marker = new google.maps.Marker({position: data.location.latLng,map: map,title: data.location.description});
 
 		svp.setPano(data.location.pano);
 		// ストリートビューの表示が完了した後、カメラの向きを調整する必要あり
@@ -138,12 +114,9 @@ function processSVData(data, status) {
 	    //svp.setPov({  heading: 270,  pitch: 0});
 		svp.setVisible(true);
 
-		/*マーカーにイベントリストを登録
-		marker.addListener('click', function() {var markerPanoID = data.location.pano;// Set the Pano to use the passed panoID.
-			svp.setPano(markerPanoID);
-			svp.setPov({heading: 270,pitch: 0});
-			svp.setVisible(true);});
-		*/
+		//マーカーにイベントリストを登録
+		//marker.addListener('click', function() {var markerPanoID = data.location.pano;// Set the Pano to use the passed panoID.
+		//	svp.setPano(markerPanoID);svp.setPov({heading: 270,pitch: 0});svp.setVisible(true);});
 
 	} else {//クリックした位置には、ストリートビュー画像がなかった
 		console.log('Street View data not found for this location.');
@@ -160,16 +133,16 @@ function postLatLngListToBlob(){
 function deleteLatLngListItem(){
 	////ソケットIOを利用して、緯度経度リストをブロブに保存
 	var delPointId;
-	var selector;
+	var selectId;
 	$(".mapPoint").each(function() {
 		if($(this).css('fontWeight') == '700'){//フォントスタイルボールドのリストををセレクト
 			if(confirm($(this).text()+'を削除しますか？')){
-				console.log("indexは:"+$(this).index());
-				selector = '#'+$(this).attr("id");
-				delPointId= $(selector).index("li");//リストから削除する対象の番号を取得
-				$(this).remove();
-				pointArr.splice(delPointId, 1); // リストから削除
-		
+				selectId = $(this).attr("id");
+				console.log("idは:"+selectId);
+				//delPointId= $("#"+selectId).index("li");//リストから削除する対象の番号を取得
+				$(this).remove();//現在の要素を削除
+				//pointArr.splice(delPointId, 1); // リストから削除
+				delete latLngLst[selectId];
 			}
 		}
 	});

@@ -2,13 +2,15 @@ var map;
 var svp;//ストリートビューパノラマオブジェクト
 var svs;//ストリートビューサービスオブジェクト
 var currentLatLng;//現在の緯度経度を一時保存
-var pointArr = [];
+var LatLngList;
 var BtnCnt = 1;
 
 jQuery(function ($) {
+
 	//最初の緯度経度リストをサーバーのBlobからダウンロード
 	//サーバーへのBlobの緯度経度リスト送信リクエスト。応答は、socketIOで送受信
 	sendRequest_LatLngListFromBlobWithSocket();
+	
 	google.maps.event.addDomListener(window, 'load', initialize);
 	function initialize() {
 		var opts = {
@@ -85,14 +87,36 @@ jQuery(function ($) {
 		document.getElementById("currentLatLng").innerHTML = "緯度経度：" + pos;
 		map.panTo(pos);
 	}
+
+	//各種イベントは外部にまとめたいが、上手くいかない。
+	//ファイル読み込みイベント登録 cf:http://tmlife.net/programming/javascript/html5-file-api-file-read.html
+	$('#readFile').on('change', function(e) {
+	    var file = e.target.files[0];	// File オブジェクトを取得
+    	var reader = new FileReader();	// ファイルリーダー生成
+    	reader.onload = function(e) { // 読み込み完了イベント登録
+
+			//注意！！）要エラートラップ：読み込んだ文字列が、JSON型の文字列であるか判定する必要がある。
+			latLngLst = JSON.parse(e.target.result);//読み込んだ文字列(JSON型の文字列のはず)をJavaScriptオブジェクトにする。
+
+			var sortedArr = getSortedArr(latLngLst);//latLngLst中のキロポストで並び替えした配列を取得
+			//読み込んだ緯度経度リストから新たなHTML要素を作る。
+			var html="";
+			for (var id in sortedArr) {//json配列中のキー(ショートUID）を繰り返し取得
+				html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + sortedArr[id].kp+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+			}
+			$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
+			$("#ulList").append(html);
+		};   
+		reader.readAsText(file);		// テキストとしてファイルを読み込む
+	});
+
  });
 
-function map_pan(latlngId) {
-	svp.setPosition(pointArr[latlngId].latlng);
-	svp.setPov({heading: pointArr[latlngId].heading, pitch: pointArr[latlngId].pitch, zoom: pointArr[latlngId].zoom});
-	map.panTo(pointArr[latlngId].latlng);
+function map_pan(latlngLstId) {
+	svp.setPosition(latLngLst[latlngLstId].latlng);
+	svp.setPov({heading: latLngLst[latlngLstId].heading, pitch: latLngLst[latlngLstId].pitch, zoom: latLngLst[latlngLstId].zoom});
+	map.panTo(latLngLst[latlngLstId].latlng);
 }
-
 
 //ストリートビュー画像があったか否か
 //http://scientre.hateblo.jp/entry/20150331/streetview_image
@@ -128,14 +152,8 @@ function processSVData(data, status) {
 
 //ボタンクリックで発火
 function postLatLngListToBlob(){
-	//alert($("#pointList").html());
-	//alert(JSON.stringify(pointArr));
 	////ソケットIOを利用して、カレント緯度経度をブロブに保存
-	//saveLatLngListToBlobWithSocket($("#pointList").html());
-
-	//ここを＊＊＊＊＊＊＊＊＊＊＊＊＊↓latLangListにする
-	postLatLngListToBlobWithSocket(points);
-	//alert(JSON.stringify(pointArr,undefined,4));
+	postLatLngListToBlobWithSocket(latLngLst);
 };
 
 //リスト削除ボタンクリックで発火
@@ -159,38 +177,114 @@ function deleteLatLngListItem(){
 
 //リスト追加ボタンクリックで発火
 function addLatLngListItem(){
-	var result = prompt('現在地をリストに追加します。キロポストを入力してください', '');
-	if(result){
-		var pov=svp.getPov();//ストリートビューパノラマのカメラデータを取得
-
-		pointArr.push({		//緯度経度リストに追加
-			latlng: svp.position,
-			heading: pov["heading"],
-			pitch: pov["pitch"],
-			zoom: 0,
-			title: result
-		});
-
-		var html = '<a><li class="mapPoint" id="pointListClickEventMethod' + BtnCnt + '">' + pointArr[pointArr.length-1].title + '</li></a>'
-		$("ul").append(html);
-		//ポイントリストをクリックしたときのイベントを登録、及びそのイベントファンクションに渡すデータオブジェクトを設定
-		$("body").on("click", "#pointListClickEventMethod" + BtnCnt, {opt: BtnCnt - 1}, function (eo) {
-			map_pan(eo.data.opt);//ファンクションに渡されたデータオブジェクトは、【eo.data.opt】で参照できる。
-		});
-		BtnCnt++;
-
-		// マーカーを立てる。
-		var marker = new google.maps.Marker({
-			position: svp.position,
-			map: map,
-			title: result
-		});
-
-		//マーカーにイベントリストを登録 ===>不必要とする。
-		//marker.addListener('click', function() {//var markerPanoID = data.location.pano;// Set the Pano to use the passed panoID.
-		//	svp.setPano(svp.getPano);svp.setPov(svp.getPov);{heading: 270,pitch: 0});svp.setVisible(true);		});
+	var resultKp = prompt('キロポストを入力してください', '');
+	
+	//入力値が数値に変換できれば数値にする。
+	if(Number(resultKp) >0) resultKp = Number(resultKp)
+	else{
+		alert("入力値は、数値ではありませんでした。");
+		return false;
 	}
+	var resultTtl = prompt('標題があれば入力してください。', '');
+	if(resultTtl =="") resultTtl = resultKp;//タイトルがなければKpを代入
+
+	//ショートUIDを作成
+	var sUid = getShortUid(latLngLst,function(){alert("sUid checked!");});
+
+	var pov=svp.getPov();//ストリートビューパノラマのカメラデータを取得
+	latLngLst[sUid]={	
+		latlng: {lat:currentLatLng.lat(),lng:currentLatLng.lng()},
+		heading: pov["heading"],
+		pitch: pov["pitch"],
+		zoom: 0,
+		title: resultTtl,
+		kp:resultKp
+	}
+
+	//====タイトル(KP)順に並び替え====
+	//一旦、一時配列に緯度経度リストをコピー(緯度経度リストのままでは、ソートできない。)
+	var sortedArr = getSortedArr(latLngLst);//latLngLst中のキロポストで並び替えした配列を取得
+
+	//ポイントが追加された新たなHTMLを作る。
+	var html="";
+	for(var id in sortedArr){
+		html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + sortedArr[id].kp+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+	}
+
+	$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
+	$("#ulList").append(html);
 }
+
+//並び替えボタンクリックで発火
+/*
+function sortLatLngListItem(){
+	//====タイトル(KP)順に並び替え====
+	//一旦、一時配列に緯度経度リストをコピー(緯度経度リストのままでは、ソートできない。)
+
+	console.log("LIST:"+latLngLst);
+	latLngLst = JSON.stringify(latLngLst);
+latLngLst.sort(function(val1, val2) {;//キロポスト順に並び替え実施
+			return ( val1.title < val2.title ? 1 : -1);
+     	});
+	var tmpArr=[];
+	for(var sUid in latLngLst){
+		tmpArr[tmpArr.length] = {id:sUid, title:latLngLst[sUid].title};
+	}
+	//一時配列をソート
+	tmpArr.sort(function(a,b){
+    	if(Number(a.title)>Number(b.title)) return 1;
+    	if(Number(a.title)<Number(b.title)) return -1;
+    	return 0;
+	});
+
+	//ポイントが追加された新たなHTMLを作る。
+	var html="";
+	for(var id in tmpArr){
+		html = html+'<a><li class="mapPoint" id="' + tmpArr[id].id + '" onClick="listClick(this)">' + tmpArr[id].title+"KP" + '</li></a>';
+	}
+
+	$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
+	$("#ulList").append(html);
+}
+*/
+
+function getSortedArr(latLngLst){//latLngLstはobj型
+	var tmpArr=[];
+	//一時配列を作る
+	for(var sUid in latLngLst){
+		tmpArr[tmpArr.length] = {id:sUid, kp:latLngLst[sUid].kp};
+	}
+	//一時配列をソート
+	tmpArr.sort(function(a,b){
+		//↓エラー回避のため、数値か否か判定し、文字列なら半角数値とピリオド以外を削除したのち数値にしてから判定
+		//var valA = Number(a.kp.replace(/[^0-9^\.]/g,""));//半角数値と"."(ピリオド)以外を削除
+		//var valB = Number(b.kp.replace(/[^0-9^\.]/g,""));
+
+		var valA = Number(a.kp);//そのまま数値に変換を行う（文字列なら"NaN"になる。)
+		var valB = Number(b.kp);
+
+		//判定
+		if(valA > valB)	return 1;
+    	if(valA < valB)	return -1;
+		
+    	return 0;
+	});
+	return tmpArr;
+}
+
+function listClick(elm){
+	if(currentPoint != ""){//前に登録していたリストポイントがあれば、スタイルを元に戻す。
+		currentPoint.style.backgroundColor = '#aaaaaa';
+		currentPoint.style.fontWeight = 'normal';
+		currentPoint.style.color = 'mediumblue';
+	}
+	elm.style.backgroundColor = '#ccccca';
+	elm.style.fontWeight = 'bold';
+	elm.style.color = 'orangered';
+	currentPoint = elm;
+	map_pan(elm.id);//ファンクションに渡されたデータオブジェクトは、【e.data.sUid】で参照できる。
+}
+
 
 //地図クリック位置に移動しマーカをセット
 function placeMarkerAndPanTo(latLng) {
@@ -202,3 +296,53 @@ function placeMarkerAndPanTo(latLng) {
 	svp.setPosition( latLng);
 	currentLatLng=latLng;//現在の緯度経度を保存
 }
+
+function getShortUid(lst){
+	var tmpSuid
+
+	do{	//新たなショートUIDを取得
+		//仮のショートUIDを作成
+		tmpSuid = new Date().getTime().toString(16)  + Math.floor(1000*Math.random()).toString(16);
+	//凝ったコード↓
+	//while文中の無名関数でリストの中に同じ値のsUidが存在していないかチェックしている。
+	}while((function(){//関数内がfalseになるまでdoループ
+		for(var itm in lst){//jsonリスト中の全てのキーをループ
+			if(itm == tmpSuid)
+				return true;
+		}
+		return false;
+	})());//←括弧のオンパレード！"()"は、当関数が即時実行関数であることから必須
+
+	return tmpSuid;
+}
+
+//===========ソケットIO(クライアントからサーバーへ）================= 
+//	サーバーへのBlobの緯度経度リスト送信リクエスト
+//リスト保存ボタンクリックで発火
+function postLatLngListToBlobWithSocket(latLngLst) {
+	if(confirm('サーバーに、緯度経度リストを保存しますか？')){
+		////ソケットIOを利用して、緯度経度リストをブロブに保存
+		console.log('   サーバーへEmit：【緯度経度リスト保存[Post]】');
+		console.log('latLngLst:'+latLngLst);
+		socket.emit('C2S:postLatLngListToBlob', JSON.stringify(latLngLst));//JSON型の文字列にしてからサーバに送る。
+	}
+}
+
+function sendRequest_LatLngListFromBlobWithSocket() {
+	console.log('   サーバーへ【データSendRequest】Emitする。');
+	socket.emit('C2S:sendRequest_LatLngList');
+}
+
+//デバッグ用：jsonかどうかを判定する。
+function isJSON(arg){
+	arg = (typeof arg === "function") ? arg() : arg;
+	if (typeof arg  !== "string") {
+		return false;
+	}
+	try {
+		arg = (!JSON) ? eval("(" + arg + ")") : JSON.parse(arg);
+		return true;
+	} catch (e) {
+		return false;
+	}
+};

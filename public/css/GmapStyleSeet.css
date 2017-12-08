@@ -7,15 +7,17 @@
 #pointList {
 	margin-top: 10px;
 	background-color: #aaaaaa;
-	color = 'cornflowerblue';
+	color = 'red';
 }
 .mapPoint {
 	padding: 10px 10px;
 	border-bottom: 1px solid #CCC;
 	margin: 0px 2px;
+	color = 'red';
 }
 .mapPoint:hover {
 	background-color: #eee;
+
 }
 #currentLatLng{
 	margin-top: 20px;

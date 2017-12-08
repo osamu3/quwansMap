@@ -1,4 +1,8 @@
 !markers.json
+
+#osmついか
+latLngLst.json
+*.BAK*
 # Logs
 logs
 *.log

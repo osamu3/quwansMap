@@ -42,17 +42,20 @@ io.sockets.on('connection', function (socket){
 	socket.emit('S2C:Msg', 'hello----!!! client');
 
 	//========【受信イベント定義】========
-	//        【緯度経度リスト要求】
+	//        【緯度経度リスト要求の着信】
 	socket.on('C2S:sendRequest_LatLngList', function (){
 		//クライアントからの緯度経度List送信要求にたいして、Blobからリストを取り出し、クライアントへ送る
 		readLatLngListFromBlob(function(listData){//←コールバック関数でクライアントへソケットでデータ送信
-			socket.emit("S2C:SendLatLngLst",listData);
+			socket.emit("S2C:sendLatLngLst",listData);
 		});
 	});
 
-	//         【緯度経度リスト保存】
-	socket.on('C2S:postLatLngListToBlob', function (latLngLst){
-		createJsonToBlob(latLngLst,function(){//←コールバック関数で↓クライアントへ保存完了のソケットメッセージ送信
+	//========【緯度経度リスト保存要求の着信】=======
+	socket.on('C2S:postLatLngListToBlob', function (latLngLstStrings){
+		//注意！！)BLOBに保存する前にJSON文字列型であるか判定する必要あり
+		blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, latLngLstStrings, function(error){
+			handleError(error);
+ 			console.log('Blobへの保存成功');
 	 		console.log('Send:S->C:サーバーからクライアントへ保存完了を返信');
 			socket.emit("S2C:Msg","緯度経度リスト保存完了");
 		});
@@ -60,16 +63,6 @@ io.sockets.on('connection', function (socket){
 });
 
 //Blobへの読み込み関数を定義
-var createJsonToBlob = function (writeDt,aCllback){
-								//文法：JSON.stringify(value[, replacer[, space]])　replacerを[undefined]とすることで、第二引数を省略
-	blobService.createAppendBlobFromText(CONTAINER_NAME, BLOCK_BLOB_NAME, JSON.stringify(writeDt,undefined,2), function(error){
-		handleError(error);
- 		console.log('Blobへの保存成功');
-		aCllback();//呼び出し側の関数(コールバック)をここで実行
-	});
-}
-
-//Blobへの書き込み関数を定義
 //cf：https://docs.microsoft.com/ja-jp/azure/storage/blobs/storage-nodejs-how-to-use-blob-storage#upload-a-blob-into-a-container
 var readLatLngListFromBlob = function (aCllback){
 	blobService.getBlobToText(CONTAINER_NAME, BLOCK_BLOB_NAME, function(error, result, response){

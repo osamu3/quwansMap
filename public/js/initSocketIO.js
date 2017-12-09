@@ -16,12 +16,19 @@ $(function() {
 		//リストに登録
 		//$("#pointList").append('<ul id="ulList">');
 		var html = "";
+		var mapIconNm;
+		var mapHalfKpIconNm="img/markerHalf.png";
+		var kiroPost;
 		for (var id in sortedArr) {//json配列中のキー(ショートUID）を繰り返し取得
-			html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + sortedArr[id].kp+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
-	//			alert(latLngLst[sortedArr[id].id].latlng.lat);
+			kiroPost = sortedArr[id].kp;
+			html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+			if(Number.isInteger(kiroPost)) mapIconNm = "img/marker"+sortedArr[id].kp+".png"
+			else mapIconNm = "img/markerHalf.png";
+//alert("marker"+sortedArr[id].kp);
 			var marker = new google.maps.Marker({
     			position: latLngLst[sortedArr[id].id].latlng,
     			map: map,
+				icon: mapIconNm,
     			title: latLngLst[sortedArr[id].id].title
   			});
 		}

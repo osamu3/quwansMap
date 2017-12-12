@@ -4,6 +4,12 @@ var svs;//ストリートビューサービスオブジェクト
 var currentLatLng;//現在の緯度経度を一時保存
 var LatLngList;
 var BtnCnt = 1;
+//ルート計測用
+var directionsService = new google.maps.DirectionsService();
+var directionsRenderer = new google.maps.DirectionsRenderer();
+var route1Latlng = new google.maps.LatLng(35.29757974932173, 135.13061450299858);  //蒲生
+var route2Latlng = new google.maps.LatLng(35.334646, 134.926578);  //小倉
+
 
 jQuery(function ($) {
 

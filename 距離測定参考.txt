@@ -1,0 +1,91 @@
+https://qiita.com/aosho235/items/c24ae08f5850b69fadf0
+http://jsdo.it/ksk1015/grHx
+
+// forked from ksk1015's "Google Map APIの練習 道や線路を消し、縮小拡大を制限する" http://jsdo.it/ksk1015/bj39
+// forked from ksk1015's "Google Map APIの練習 色を変更する2 - 地獄篇" http://jsdo.it/ksk1015/5wrl
+// forked from ksk1015's "Google Map APIの練習 色を変更する" http://jsdo.it/ksk1015/lOxL
+// forked from ksk1015's "Google Map APIの練習 マーカーとウィンドウ付ける" http://jsdo.it/ksk1015/i9yq
+// forked from ksk1015's "Google Map APIの練習 " http://jsdo.it/ksk1015/26bu
+
+// 二つ目の地図
+(function(){
+    
+    // 地図
+    var mapElem = document.getElementById("map");
+    var latlng = new google.maps.LatLng(34.972274,138.386385);
+    var mapOptions = {
+        center: latlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        zoom: 16,
+        mapTypeControl: false,
+        streetViewControl: false,
+        panControl: false
+    };
+    var map = new google.maps.Map(mapElem, mapOptions);
+    
+    // 地図のスタイル
+    var grayStyle = [
+        {
+            "stylers": [
+                { "saturation": -100 }
+            ]
+        }
+    ];
+    map.mapTypes.set("gray", new google.maps.StyledMapType(grayStyle));
+    map.setMapTypeId("gray");
+    
+    // ルートとアイコン
+    var routeCoordinates = [
+        new google.maps.LatLng(34.971773,138.388864),
+        new google.maps.LatLng(34.972489,138.388343),
+        new google.maps.LatLng(34.9727,138.387163),
+        new google.maps.LatLng(34.973316,138.38549),
+        new google.maps.LatLng(34.971461,138.384309),
+        new google.maps.LatLng(34.971553,138.384116)
+    ];
+    var routePath = new google.maps.Polyline({
+        path: routeCoordinates,
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.6,
+        strokeWeight: 3,
+        icons: [{
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                strokeColor: '#FF0000'
+            },
+            offset: '100%'
+        }]
+    });
+    routePath.setMap(map);
+    
+    // アイコンのアニメーション
+    var timerId, count = 0;
+    function move(){
+        if(timerId){
+            return;
+        }
+        timerId = setInterval(function(){
+            count = (count + 1) % 200;
+            var icons = routePath.get('icons');
+            icons[0].offset = (count / 2) + '%';
+            routePath.set('icons', icons);
+        }, 20);
+    }
+    function pause(){
+        if(!timerId){
+            return;
+        }
+        clearTimeout(timerId);
+        timerId = null;
+    }
+    move();
+    
+    window.pausemove = function(){
+        if(timerId){
+            pause();
+        }else{
+            move();
+        }
+    };
+})();

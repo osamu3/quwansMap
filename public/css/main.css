@@ -10,7 +10,6 @@
   padding: 2%;
   border-radius: 10px
 }
-
 #data {
    position: absolute;left:90px;top:22px;
    overflow-x:scroll;overflow-y:scroll;

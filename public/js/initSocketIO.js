@@ -24,13 +24,18 @@ $(function() {
 			html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
 			if(Number.isInteger(kiroPost)) mapIconNm = "img/marker"+sortedArr[id].kp+".png"
 			else mapIconNm = "img/markerHalf.png";
+
+    		console.log( latLngLst[sortedArr[id].id].title);
+
 //alert("marker"+sortedArr[id].kp);
+
 			var marker = new google.maps.Marker({
     			position: latLngLst[sortedArr[id].id].latlng,
     			map: map,
 				icon: mapIconNm,
     			title: latLngLst[sortedArr[id].id].title
   			});
+
 		}
 		$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
 		$("#ulList").append(html);

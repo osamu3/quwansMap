@@ -1,3 +1,29 @@
+/*
+ ==============↓ここから=============
+Cf:Bootstrap3でスクロール可能なサイドバーがある2カラムレイアウトを作成する
+https://kuroeveryday.blogspot.jp/2016/10/scrollable-sidbar-using-bootstrap.html
+特にスクロールバー要素などの設定があるわけではない。自動的にスクロールバーがでる？
+*/
+
+.sidebar{
+	display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto
+  }
+}
+/*
+ ==============↑ここまで=============
+*/
+
 #mapCanvas {
 	height: 300px;
 }

@@ -1,6 +1,5 @@
 //変更ボタンクリックで発火
 function reNameLatLngListItem(){
-	////ソケットIOを利用して、緯度経度リストをブロブに保存
 	var delPointId;
 	var selectId;
 	$(".mapPoint").each(function() {
@@ -24,3 +23,18 @@ function reNameLatLngListItem(){
 		}
 	});
 }
+
+//計測ボタンクリックで発火
+function getRoute(){
+// ルートを取得
+	var request = {
+		origin: route1Latlng,        // 出発地点の緯度、経度
+		destination: route2Latlng,   // 到着地点の緯度、経度
+		travelMode: google.maps.DirectionsTravelMode.WALKING // ルートの種類
+	};
+	directionsService.route(request, function(result, status) {
+		directionsRenderer.setDirections(result); // 取得したルートをセット
+ 		directionsRenderer.setMap(map); // ルートを地図に表示
+	});
+}
+

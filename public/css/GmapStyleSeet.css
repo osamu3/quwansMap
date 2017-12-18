@@ -23,17 +23,26 @@ https://kuroeveryday.blogspot.jp/2016/10/scrollable-sidbar-using-bootstrap.html
 /*
  ==============↑ここまで=============
 */
+/* ↓ 訪問済みリンクの色を変えない 。効かない( ;∀;)
+.mapPoint:hover {
+　color : #2040FF;
+}
+*/
+
+.cmdButton{
+ 	margin : 0px ;
+    padding : 0px ;
+}
+
+.sidebar {
+	font-size: 12px;
+}
 
 #mapCanvas {
 	height: 300px;
 }
 #mapView {
 	height: 300px;
-}
-#pointList {
-	margin-top: 10px;
-	background-color: #aaaaaa;
-	color = 'red';
 }
 .mapPoint {
 	padding: 10px 10px;
@@ -43,8 +52,8 @@ https://kuroeveryday.blogspot.jp/2016/10/scrollable-sidbar-using-bootstrap.html
 }
 .mapPoint:hover {
 	background-color: #eee;
-
 }
+
 #currentLatLng{
 	margin-top: 20px;
 	padding-left: 10px;

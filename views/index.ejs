@@ -1,73 +1,146 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="ja">
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-		<meta name="robots" content="noindex,nofollow,noarchive"/>
-		
-		<!-- レスポンシブWebデザインを使うために必要なmetaタグ -->
-		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>Google Maps Street View サンプル</title>
+<head>
+	<title>Google Maps Street View サンプル</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="robots" content="noindex,nofollow,noarchive" />
 
-		<!--ブートストラップ読み込み -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
-		<link rel="stylesheet" href="css/GmapStyleSeet.css">
 
-		<script src='http://code.jquery.com/jquery-1.11.1.min.js'></script>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAT1CHvQkiTKOdPbmJp2gOpqDIblMgzfI"></script>
+	<!--ブートストラップ読み込み 
+-->
+	<!-- Bootstrap CSS -->
+	<!-- レスポンシブWebデザインを使うために必要なmetaタグ -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<!--  <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">  -->
+	<link rel="stylesheet" href="css/GmapStyleSeet.css">
 
-		<script type="text/javascript" src="js/GmapStreetVeiw.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
-	    <script src='js/initSocketIO.js'></script>
-	    <script type="text/javascript" src='js/clickFunctions.js'></script>
-	</head>
+</head>
 
-	<body>
-		<div class ="row">
-			<div class="sidebar col-sm-3 hidden-xs"><!--2割bootstrapパラメータ -->
-				<p>Sidebar</p>
-					<button type="button" onclick=postLatLngListToBlob()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						保存
-					</button>
-					<button type="button" onclick=addLatLngListItem()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						追加
-					</button>
-					<button type="button" onclick=deleteLatLngListItem()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						削除
-					</button>
-					<button type="button" onclick=sortLatLngListItem()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						並替
-					</button>
-					<button type="button" onclick=fileReadLatLngList()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						読込
-					</button>
-					<button type="button" onclick=reNameLatLngListItem()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						変更
-					</button>
-					<button type="button" onclick=getRoute()>
-						<img src="img/mark.gif" alt="［！］" width="15" height="15"><br>
-						計測
-					</button>
-					<input type="file" id="readFile">
-				</p>
-				<div id="pointList" class="latLangList">
-					<ul id="ulList">'
+<body>
+	<div class="row">
+		<div class="sidebar col-sm-3 hidden-xs" style="position:fixed">
+			<!--2割bootstrapパラメータ -->
+			<button type="button" onclick=postLatLngListToBlob() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 保存
+			</button>
+			<button type="button" onclick=addLatLngListItem() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 追加
+			</button>
+			<button type="button" onclick=deleteLatLngListItem() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 削除
+			</button>
+			<button type="button" onclick=sortLatLngListItem() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 並替
+			</button>
+			<button type="button" onclick=fileReadLatLngList() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 読込
+			</button>
+			<button type="button" onclick=reNameLatLngListItem() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 変更
+			</button>
+			<button type="button" onclick=getRoute() class="cmdButton">
+				<img src="img/mark.gif" alt="［！］" width="10" height="10">
+				<br> 計測
+			</button>
+			<input type="file" id="readFile">
+			<div class="row">
+				<div class=" col-sm-8">
+					<ul class="nav nav-pills">
+						<li class="active dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Ｒ９
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#menu9-1" data-toggle="tab">京丹波</a>
+								</li>
+								<li>
+									<a href="#menu9-2" data-toggle="tab">三和</a>
+								</li>
+								<li>
+									<a href="#menu9-3" data-toggle="tab">福知山</a>
+								</li>
+								<li>
+									<a href="#menu9-4" data-toggle="tab">夜久野</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Ｒ27
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="#menu27-1" data-toggle="tab">舞鶴</a></li>
+								<li><a href="#menu27-2" data-toggle="tab">綾部</a></li>
+								<li><a href="#menu27-3" data-toggle="tab">京丹波</a></li>
+							</ul>
+						</li>
 					</ul>
+					<div class="tab-content">
+						<div id="menu9-1" class="tab-pane fade in active">
+							<h3>R9:京丹波</h3>
+							<ul id="ulList9-1"></ul>
+						</div>
+						<div id="menu9-2" class="tab-pane fade">
+							<h3> R9:三和</h3>
+							<ul id="ulList9-2"></ul>
+						</div>
+						<div id="menu9-3" class="tab-pane fade">
+							<h3>R9:福知山</h3>
+							<ul id="ulList9-3"></ul>
+						</div>
+						<div id="menu9-4" class="tab-pane fade">
+							<h3>R9:夜久野</h3>
+							<ul id="ulList9-4"></ul>
+						</div>
+						<div id="menu27-1" class="tab-pane fade">
+							<h3>R27:舞鶴</h3>
+							<ul id="ulList27-1"></ul>
+						</div>
+						<div id="menu27-2" class="tab-pane fade">
+							<h3>R27:綾部</h3>
+							<ul id="ulList27-2"></ul>
+						</div>
+						<div id="menu27-3" class="tab-pane fade">
+							<h3>R27:京丹波</h3>
+							<ul id="ulList27-3"></ul>
+						</div>
+					</div>
 				</div>
-				<div id="currentLatLng"></div>
-			</div>
-			<div class="col-sm-9 col-sm-offset-3"><!--10割bootstrapパラメータ -->
-				<div id="mapCanvas"></div>
-				<div id="mapView"></div>
+				<div class="col-sm-4">
+					<div id="currentLatLng"></div>
+				</div>
 			</div>
 		</div>
-<h6> 画面右に、現在地をマークするためのボタンを登録。ストリートビュー画面にカメラの向きが「上り」「下り」を表示 </h6>
-  </body>
+		<div class="col-sm-9 col-sm-offset-3">
+			<!--10割bootstrapパラメータ -->
+			<div id="mapCanvas"></div>
+			<div id="mapView"></div>
+		</div>
+	</div>
+	<h6> 画面右に、現在地をマークするためのボタンを登録。ストリートビュー画面にカメラの向きが「上り」「下り」を表示 </h6>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	 crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+	 crossorigin="anonymous"></script>
+	<!--		<script src='http://code.jquery.com/jquery-1.11.1.min.js'></script> -->
+	<!-- <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script> -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAT1CHvQkiTKOdPbmJp2gOpqDIblMgzfI"></script>
+
+	<script type="text/javascript" src="js/GmapStreetVeiw.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src='js/initSocketIO.js'></script>
+	<script type="text/javascript" src='js/clickFunctions.js'></script>
+</body>
+
 </html>

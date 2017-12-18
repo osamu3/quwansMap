@@ -4,11 +4,15 @@ var svs;//ストリートビューサービスオブジェクト
 var currentLatLng;//現在の緯度経度を一時保存
 var LatLngList;
 var BtnCnt = 1;
+//var KpMarkerArray = [] を使用しない。for each ループを使用するため。
+var KpMarkerArray = new google.maps.MVCArray();//キロポストマーカーを保存する配列：一括削除用
+
 //ルート計測用
 var directionsService = new google.maps.DirectionsService();
 var directionsRenderer = new google.maps.DirectionsRenderer();
-var route1Latlng = new google.maps.LatLng(35.29757974932173, 135.13061450299858);  //蒲生
-var route2Latlng = new google.maps.LatLng(35.334646, 134.926578);  //小倉
+var route1Latlng = new google.maps.LatLng(35.1665776892919, 135.42206508675656);  //46kp
+var route2Latlng = new google.maps.LatLng(35.17237277683548, 135.41388555190997);  //47kp
+
 
 
 jQuery(function ($) {
@@ -49,7 +53,7 @@ jQuery(function ($) {
 			//↓LatLng が渡されると、指定された領域でパノラマ データを検索し、【processSVData】関数を呼び出す。
 			svs.getPanorama({
 				location: e.latLng,// 目標物の座標
-				radius: 50,// 指定座標からどれだけ離れた撮影地点までを選択するかメートル単位で設定。デフォルトでは50
+				radius: 20,// 指定座標からどれだけ離れた撮影地点までを選択するかメートル単位で設定。デフォルトでは50
 				source: google.maps.StreetViewSource.OUTDOOR // 画像の種類を選択する。OUTDOOR ならインドアビューを除外
 			}, processSVData);
 			//placeMarkerAndPanTo(e.latLng);
@@ -59,13 +63,13 @@ jQuery(function ($) {
 		svp.setPov({heading: 0, pitch: 0, zoom: 0});
 		map.setStreetView(svp);
 		//google.mapsのイベントをセット、呼び出される関数名は【review】
-		google.maps.event.addListener(svp, 'tilesloaded', review);   //地図タイルが変更されたときにはkk
+		google.maps.event.addListener(svp, 'tilesloaded', review);   //地図タイルが変更されたときに発火
 		//google.maps.event.addListener(svp, 'pano_changed', review);//パノラマIDが変更されたときに発火
 		//google.maps.event.addListener(svp, 'pov_changed', review); //カメラの向が変更されたときに発火
 		google.maps.event.addListener(svp,'position_changed', review); //ストリートビューの緯度経度が変更されたときに発火
 	}
  
-	function review() {
+	function review() { //地図タイルが変更されたときに発火
 		var pos = svp.getPosition();
 		currentLatLng = pos;
 		document.getElementById("currentLatLng").innerHTML = "<h6>緯度経度：" + pos+"</h6>";
@@ -73,7 +77,8 @@ jQuery(function ($) {
 	}
 
 	//各種イベントは外部にまとめたいが、上手くいかない。
-	//ファイル読み込みイベント登録 cf:http://tmlife.net/programming/javascript/html5-file-api-file-read.html
+
+	//ファイル読み込み【イベント登録】 cf:http://tmlife.net/programming/javascript/html5-file-api-file-read.html
 	$('#readFile').on('change', function(e) {
 	    var file = e.target.files[0];	// File オブジェクトを取得
     	var reader = new FileReader();	// ファイルリーダー生成
@@ -82,23 +87,62 @@ jQuery(function ($) {
 			//注意！！）要エラートラップ：読み込んだ文字列が、JSON型の文字列であるか判定する必要がある。
 			latLngLst = JSON.parse(e.target.result);//読み込んだ文字列(JSON型の文字列のはず)をJavaScriptオブジェクトにする。
 
+			//一旦キロポスト用マーカ配列を削除
+			KpMarkerArray.forEach(function (marker) { marker.setMap(null); });
+
 			var sortedArr = getSortedArr(latLngLst);//latLngLst中のキロポストで並び替えした配列を取得
-			//読み込んだ緯度経度リストから新たなHTML要素を作る。
-			var html="";
+			//読み込んだ緯度経度リストから新たなHTML要素を作る。↓配列にすること！！
+			var html9_1="";		var html9_2="";		var html9_3="";		var html9_4="";
+			var html27_1="";	var html27_2="";	var html27_3="";
+			var kiroPost;
 			for (var id in sortedArr) {//json配列中のキー(ショートUID）を繰り返し取得
-				html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + sortedArr[id].kp+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+				kiroPost = sortedArr[id].kp;
+				if(sortedArr[id].route == 9)
+					if(kiroPost < 60.22) 
+						html9_1 = html9_1+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+					else if(kiroPost < 71.405) 
+						html9_2 = html9_2+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+					else if(kiroPost < 98.106) 
+						html9_3 = html9_3+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+					else 
+						html9_4 = html9_4+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+
+//↓外部モジュールにする。一旦マーカー全部削除必要
+//↓一時コメントアウトしています。＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+/* キロポストから適切なマーカーアイコン名を設定
+			if(Number.isInteger(kiroPost)) mapIconNm = "img/marker"+sortedArr[id].kp+".png"
+			else mapIconNm = mapHalfKpIconNm;
+
+			var marker = new google.maps.Marker({
+    			position: latLngLst[sortedArr[id].id].latlng,
+    			map: map,
+				icon: mapIconNm,
+    			title: latLngLst[sortedArr[id].id].title
+  			});
+			KpMarkerArray.push(marker);//キロポスト用マーカー配列に保存
+
+*/
+//↑＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
 			}
-			$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
-			$("#ulList").append(html);
+			$("#ulList9-1").empty();//一旦、子要素を削除してリストを空にする。
+			$("#ulList9-2").empty();
+			$("#ulList9-3").empty();
+			$("#ulList9-4").empty();
+			$("#ulList9-1").append(html9_1);
+			$("#ulList9-2").append(html9_2);
+			$("#ulList9-3").append(html9_3);
+			$("#ulList9-4").append(html9_4);
 		};
 		reader.readAsText(file);		// テキストとしてファイルを読み込む
 	});
 });
 
+//地図とストリートビューの移動の
 function map_pan(latlngLstId) {
-	svp.setPosition(latLngLst[latlngLstId].latlng);
+	svp.setPosition(latLngLst[latlngLstId].latlng);//ストリートビューの移動
 	svp.setPov({heading: latLngLst[latlngLstId].heading, pitch: latLngLst[latlngLstId].pitch, zoom: latLngLst[latlngLstId].zoom});
-	map.panTo(latLngLst[latlngLstId].latlng);
+	map.panTo(latLngLst[latlngLstId].latlng);//地図の移動
 }
 
 //ストリートビュー画像があったか否か
@@ -129,7 +173,7 @@ function processSVData(data, status) {
 	}
 }
 
-//ボタンクリックで発火
+//ポスト ボタンクリックで発火
 function postLatLngListToBlob(){
 	////ソケットIOを利用して、カレント緯度経度をブロブに保存
 	postLatLngListToBlobWithSocket(latLngLst);
@@ -156,16 +200,23 @@ function deleteLatLngListItem(){
 
 //リスト追加ボタンクリックで発火
 function addLatLngListItem(){
+	var routeNo = prompt('国道番号を入力してください', '');
+
+	//入力値が数値に変換できれば数値にする。
+	if(Number(routeNo) >0) routeNm = Number(routeNo)
+	else{
+		alert("入力値は、数値ではありませんでした。");
+		return false;
+	}
 	var resultKp = prompt('キロポストを入力してください', '');
-	
 	//入力値が数値に変換できれば数値にする。
 	if(Number(resultKp) >0) resultKp = Number(resultKp)
 	else{
 		alert("入力値は、数値ではありませんでした。");
 		return false;
 	}
-	var resultTtl = prompt('標題があれば入力してください。', '');
-	if(resultTtl =="") resultTtl = resultKp;//タイトルがなければKpを代入
+	var resultTtl = prompt('標題があれば入力してください。(空白ならKpをタイトルに設定)', '');
+	if(resultTtl =="") resultTtl = resultKp.toString(); ;//タイトルがなければKpを代入
 
 	//ショートUIDを作成
 	var sUid = getShortUid(latLngLst,function(){alert("sUid checked!");});
@@ -177,6 +228,7 @@ function addLatLngListItem(){
 		pitch: pov["pitch"],
 		zoom: 0,
 		title: resultTtl,
+		route: routeNo,
 		kp:resultKp
 	}
 
@@ -184,15 +236,49 @@ function addLatLngListItem(){
 	//一旦、一時配列に緯度経度リストをコピー(緯度経度リストのままでは、ソートできない。)
 	var sortedArr = getSortedArr(latLngLst);//latLngLst中のキロポストで並び替えした配列を取得
 
-	//ポイントが追加された新たなHTMLを作る。
-	var html="";
-	for(var id in sortedArr){
-		html = html+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + sortedArr[id].kp+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
-	}
+	//一旦キロポスト用マーカ配列を削除
+	KpMarkerArray.forEach(function (marker) { marker.setMap(null); });
 
-	$("#ulList").empty();//一旦、子要素を削除してリストを空にする。
-	$("#ulList").append(html);
+	//ポイントが追加された新たなHTMLを作る。HTML要素を作る。↓配列にすること！！
+	var html9_1="";		var html9_2="";		var html9_3="";		var html9_4="";
+	var html27_1="";	var html27_2="";	var html27_3="";
+	var kiroPost;
+	var mapIconNm;
+	var mapHalfKpIconNm="img/markerHalf.png";
+	var kiroPost;
+	for (var id in sortedArr) {//json配列中のキー(ショートUID）を繰り返し取得
+		kiroPost = sortedArr[id].kp;
+		if(sortedArr[id].route == 9)
+			if(kiroPost < 60.22) 
+				html9_1 = html9_1+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+			else if(kiroPost < 71.405) 
+				html9_2 = html9_2+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+			else if(kiroPost < 98.106) 
+				html9_3 = html9_3+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+			else 
+				html9_4 = html9_4+'<a><li class="mapPoint" id="' + sortedArr[id].id + '" onClick="listClick(this)">' + kiroPost+"KP: "+ latLngLst[sortedArr[id].id].title + '</li></a>';
+		//キロポストから適切なマーカーアイコン名を設定
+		if(Number.isInteger(kiroPost)) mapIconNm = "img/marker"+sortedArr[id].kp+".png"
+		else mapIconNm =mapHalfKpIconNm;
+
+		var marker = new google.maps.Marker({
+   			position: latLngLst[sortedArr[id].id].latlng,
+   			map: map,
+			icon: mapIconNm,
+   			title: latLngLst[sortedArr[id].id].title
+		});
+		KpMarkerArray.push(marker);//キロポスト用マーカー配列に保存
+	}
+	$("#ulList9-1").empty();//一旦、子要素を削除してリストを空にする。
+	$("#ulList9-2").empty();
+	$("#ulList9-3").empty();
+	$("#ulList9-4").empty();
+	$("#ulList9-1").append(html9_1);
+	$("#ulList9-2").append(html9_2);
+	$("#ulList9-3").append(html9_3);
+	$("#ulList9-4").append(html9_4);
 }
+
 
 //並び替えボタンクリックで発火
 /*
@@ -231,7 +317,7 @@ function getSortedArr(latLngLst){//latLngLstはobj型
 	var tmpArr=[];
 	//一時配列を作る
 	for(var sUid in latLngLst){
-		tmpArr[tmpArr.length] = {id:sUid, kp:latLngLst[sUid].kp};
+		tmpArr[tmpArr.length] = {id:sUid, kp:latLngLst[sUid].kp, route:latLngLst[sUid].route};
 	}
 	//一時配列をソート
 	tmpArr.sort(function(a,b){
@@ -251,8 +337,10 @@ function getSortedArr(latLngLst){//latLngLstはobj型
 	return tmpArr;
 }
 
+//緯度経度リストがクリックされた時に発火
 function listClick(elm){
-	if(currentPoint != ""){//前に登録していたリストポイントがあれば、スタイルを元に戻す。
+	//訪問済みリンクの色が変わるのをここで防止できないか？
+	if(currentPoint != ""){//直前にクリックしていたリストポイントがあれば、スタイルを元に戻す。
 		currentPoint.style.backgroundColor = '#aaaaaa';
 		currentPoint.style.fontWeight = 'normal';
 		currentPoint.style.color = 'mediumblue';
@@ -267,7 +355,7 @@ function listClick(elm){
 
 //地図クリック位置に移動しマーカをセット
 function placeMarkerAndPanTo(latLng) {
-	var marker = new google.maps.Marker({
+	var marker = new google.maps.Marker({//キロポスト用のマーカーではないので、Markers[]配列には保存しない
 		position: latLng,
 		map: map	//この時の【map】変数は、クリックされた位置情報を持っている。
 	});

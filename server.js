@@ -37,8 +37,9 @@ app.use(express.static('public'));	//パス文字列無しで"public"を使用�
 
 //IOソケットイベント
 io.sockets.on('connection', function (socket){
-	//↓接続時に一度だけ実行
+	//↓接続時に一度だけ実行。 接続情報をBlobに保存すること。
 	console.log('クライアントの接続がありました。');
+	console.log(JSON.stringify(socket.handshake));
 	socket.emit('S2C:Msg', 'hello----!!! client');
 
 	//========【受信イベント定義】========
